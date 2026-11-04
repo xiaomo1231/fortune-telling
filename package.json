@@ -1,0 +1,13 @@
+{
+  "name": "moxing",
+  "private": true,
+  "packageManager": "pnpm@10.0.0",
+  "scripts": {
+    "dev": "pnpm --filter @moxing/web dev",
+    "build": "pnpm --filter @moxing/web build",
+    "test": "pnpm -r --if-present test",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "db:migrate": "pnpm --filter @moxing/web exec prisma migrate deploy",
+    "db:seed": "pnpm --filter @moxing/web exec tsx prisma/seed.ts"
+  }
+}

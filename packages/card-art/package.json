@@ -1,0 +1,20 @@
+{
+  "name": "@moxing/card-art",
+  "version": "0.1.0",
+  "description": "墨星牌 78 张牌面的 SVG 生成器：纯字符串拼接，Node SSR 与浏览器通用",
+  "type": "module",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
+    }
+  },
+  "files": [
+    "src"
+  ],
+  "sideEffects": false,
+  "license": "UNLICENSED",
+  "private": true
+}
