@@ -2,35 +2,35 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Noto+Sans+SC:wght@400;700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Noto+Serif+SC:wght@500;700&family=Noto+Sans+SC:wght@400;700&display=swap">
 <style>
-/* 布局：说明与参考在上，样张三列网格在下；牌面固定三色，页面随主题切换 */
+/* 布局：说明在上，样张四列网格在下；牌面固定为米白纸加单色朱红线，页面随主题切换 */
 :root {
-  --bg: #e7e3da; --fg: #161616; --muted: #5a5750; --line: #c9c3b6; --red: #c62a1f;
-  --font-num: "Oswald", "Arial Narrow", sans-serif;
+  --bg: #ece7de; --fg: #241c18; --muted: #6a5f57; --line: #d3c9bc; --red: #c23b2a;
+  --font-num: "Cormorant Garamond", Georgia, serif;
+  --font-title: "Noto Serif SC", "Songti SC", serif;
   --font-body: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) { --bg: #141416; --fg: #ece9e2; --muted: #a29e96; --line: #34333a; --red: #e0483f; color-scheme: dark; }
+  :root:not([data-theme="light"]) { --bg: #17140f; --fg: #efe8dd; --muted: #a99d90; --line: #3a332b; --red: #e3624f; color-scheme: dark; }
 }
-:root[data-theme="dark"] { --bg: #141416; --fg: #ece9e2; --muted: #a29e96; --line: #34333a; --red: #e0483f; color-scheme: dark; }
+:root[data-theme="dark"] { --bg: #17140f; --fg: #efe8dd; --muted: #a99d90; --line: #3a332b; --red: #e3624f; color-scheme: dark; }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.7; }
-.wrap { max-width: 980px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 56px; display: grid; gap: 28px; }
-header { display: grid; gap: 8px; border-bottom: 3px solid var(--fg); padding-bottom: 16px; }
-.eyebrow { font-family: var(--font-num); letter-spacing: .18em; font-size: 13px; color: var(--red); text-transform: uppercase; }
-h1 { margin: 0; font-weight: 900; font-size: clamp(28px, 6vw, 44px); letter-spacing: .06em; line-height: 1.15; text-wrap: balance; }
+.wrap { max-width: 1040px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 56px; display: grid; gap: 28px; }
+header { display: grid; gap: 8px; border-bottom: 1px solid var(--fg); padding-bottom: 16px; }
+.eyebrow { font-family: var(--font-num); letter-spacing: .2em; font-size: 14px; color: var(--red); text-transform: uppercase; font-weight: 600; }
+h1 { margin: 0; font-family: var(--font-title); font-weight: 700; font-size: clamp(26px, 5.5vw, 40px); letter-spacing: .08em; line-height: 1.2; text-wrap: balance; }
 header p { margin: 0; color: var(--muted); max-width: 62ch; }
-.specs { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px 24px; }
-.spec h2 { margin: 0 0 4px; font-size: 13px; font-family: var(--font-num); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+.specs { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px 24px; }
+.spec h2 { margin: 0 0 4px; font-size: 14px; font-family: var(--font-num); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
 .spec p { margin: 0; font-size: 14px; }
-.spec a { color: inherit; }
-.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 20px; }
-@media (max-width: 640px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 14px; } }
+.grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px 18px; }
+@media (max-width: 760px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 14px; } }
 figure { margin: 0; display: grid; gap: 8px; min-width: 0; align-content: start; }
 .cardbtn { padding: 0; border: 0; background: none; cursor: pointer; display: block; width: 100%; }
-.cardbtn svg { display: block; width: 100%; height: auto; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+.cardbtn svg { display: block; width: 100%; height: auto; transition: transform .6s cubic-bezier(.2,.7,.2,1); border-radius: 6px; }
 .cardbtn[aria-pressed="true"] svg { transform: rotate(180deg); }
 .cardbtn:focus-visible { outline: 2px solid var(--red); outline-offset: 4px; }
 figcaption { font-size: 13px; color: var(--muted); }
@@ -41,158 +41,166 @@ figcaption b { color: var(--fg); font-weight: 700; }
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Mo Xing Tarot · Major Arcana · Draft 02</span>
-    <h1>墨星牌 · 构成主义样张</h1>
-    <p>第二稿改成以大色块为主：斜向构图、实心剪影人物、编号当作画面的一部分。只用纸白、墨黑、朱红三色，每张牌只有一个视觉焦点。点击任意一张可以看逆位效果。</p>
+    <span class="eyebrow">Mo Xing Tarot · Major Arcana · Draft 03</span>
+    <h1>墨星牌 · 线条几何样张</h1>
+    <p>第三稿按你给的参考改成细线条加几何构成：不画人物，只用每张牌的核心象征，配上圆、三角、放射线、准星、垂珠这类几何结构。点击任意一张可以看逆位效果。</p>
   </header>
 
   <section class="specs" aria-label="设计规范">
-    <div class="spec"><h2>Composition</h2><p>主轴是 15° 到 45° 的斜线，画面不对称。大色块占画面一半以上，留白也是有意安排的结构。</p></div>
-    <div class="spec"><h2>Figure</h2><p>人物是实心剪影：圆头、梯形躯干、粗条四肢，姿态夸张、有动势。高塔里的坠落者参考 Stenberg 兄弟的倒置手法。</p></div>
-    <div class="spec"><h2>Type</h2><p>编号用粗体窄字，放大后嵌进色块，成为构图的一部分；中文牌名竖排在左上黑条里，所有牌位置固定。</p></div>
-    <div class="spec"><h2>Reference</h2><p>El Lissitzky《红楔子打击白军》、Rodchenko 的海报与书籍设计、Stenberg 兄弟电影海报、Klutsis 的人物剪影。整理自 <a href="https://creativepro.com/russian-constructivism-and-graphic-design/">CreativePro</a> 与 <a href="https://www.ls.graphics/blog/7-soviet-poster-techniques-designers-still-use-today-without-realizing-it">ls.graphics</a>。</p></div>
+    <div class="spec"><h2>Line</h2><p>单色朱红细线为主，主体 1.6、结构线 0.8。局部三角用浅红平涂或斜线排线，制造层次。</p></div>
+    <div class="spec"><h2>Geometry</h2><p>每张牌有一条主轴和一个主圆，象征物都挂在这套几何骨架上。点缀用四角星、准星圆和下垂的珠链。</p></div>
+    <div class="spec"><h2>Frame</h2><p>双线边框，顶部圆章写罗马数字，底部宋体牌名配英文，22 张位置固定。</p></div>
+    <div class="spec"><h2>Back</h2><p>牌背是神圣几何图案，严格中心对称，旋转 180° 不变，不会暴露正逆位。</p></div>
   </section>
 
   <section class="grid" id="grid" aria-label="样张"></section>
 
-  <p class="foot">牌背沿用中心对称：两道红楔从相对方向刺入白圆，旋转 180° 后图案不变，抽牌时不会暴露正逆位。确认这一稿方向后，按同一规范补齐 22 张大牌。</p>
+  <p class="foot">确认这一稿方向后，按同一套线宽、配色和版式补齐 22 张大牌。</p>
 </div>
 
 <script>
 (function () {
   "use strict";
-  var P = "#ede4d0", K = "#151515", R = "#c62a1f";
-  var NUM = 'font-family="Oswald, Arial Narrow, sans-serif" font-weight="700"';
-  function star(cx, cy, ro, ri, n, fill) {
-    var pts = [];
-    for (var i = 0; i < n * 2; i++) {
-      var r = i % 2 ? ri : ro, a = Math.PI * i / n - Math.PI / 2;
-      pts.push((cx + r * Math.cos(a)).toFixed(1) + "," + (cy + r * Math.sin(a)).toFixed(1));
-    }
-    return '<polygon points="' + pts.join(" ") + '" fill="' + fill + '"/>';
-  }
-  function wedges(cx, cy, r1, r2, n, half, fill) {
+  var BG = "#f6f0e6", L = "#c23b2a", T = "#f1c7b4";
+  var uid = 0;
+  function f(n) { return (+n).toFixed(1); }
+  function ln(x1, y1, x2, y2, w, extra) { return '<line x1="' + f(x1) + '" y1="' + f(y1) + '" x2="' + f(x2) + '" y2="' + f(y2) + '" stroke-width="' + (w || 0.8) + '"' + (extra || "") + '/>'; }
+  function ci(cx, cy, r, w, fill, extra) { return '<circle cx="' + f(cx) + '" cy="' + f(cy) + '" r="' + f(r) + '" stroke-width="' + (w == null ? 0.8 : w) + '" fill="' + (fill || "none") + '"' + (extra || "") + '/>'; }
+  function pg(pts, w, fill) { return '<polygon points="' + pts + '" stroke-width="' + (w || 0.8) + '" fill="' + (fill || "none") + '"/>'; }
+  function rays(cx, cy, r1, r2, r3, n, w) {
     var s = "";
-    for (var i = 0; i < n; i++) {
-      var a = 2 * Math.PI * i / n, h = half * Math.PI / 180;
-      s += '<polygon fill="' + fill + '" points="' +
-        (cx + r1 * Math.cos(a - h / 3)).toFixed(1) + "," + (cy + r1 * Math.sin(a - h / 3)).toFixed(1) + " " +
-        (cx + r2 * Math.cos(a - h)).toFixed(1) + "," + (cy + r2 * Math.sin(a - h)).toFixed(1) + " " +
-        (cx + r2 * Math.cos(a + h)).toFixed(1) + "," + (cy + r2 * Math.sin(a + h)).toFixed(1) + " " +
-        (cx + r1 * Math.cos(a + h / 3)).toFixed(1) + "," + (cy + r1 * Math.sin(a + h / 3)).toFixed(1) + '"/>';
-    }
+    for (var i = 0; i < n; i++) { var a = 2 * Math.PI * i / n - Math.PI / 2, r = i % 2 ? r3 : r2; s += ln(cx + r1 * Math.cos(a), cy + r1 * Math.sin(a), cx + r * Math.cos(a), cy + r * Math.sin(a), w || 0.8); }
     return s;
   }
-  function bar(x1, y1, x2, y2, w, c) { return '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + (c || K) + '" stroke-width="' + w + '" stroke-linecap="round"/>'; }
-  function dots(id, c) { return '<pattern id="' + id + '" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(30)"><circle cx="3.5" cy="3.5" r="1.4" fill="' + c + '"/></pattern>'; }
-  function nameStrip(zh) {
-    var h = zh.length * 25 + 18, s = '<rect x="6" y="6" width="32" height="' + h + '" fill="' + K + '"/>';
-    for (var i = 0; i < zh.length; i++) s += '<text x="22" y="' + (33 + i * 25) + '" text-anchor="middle" font-family="Noto Sans SC, PingFang SC, sans-serif" font-weight="900" font-size="20" fill="' + P + '">' + zh.charAt(i) + '</text>';
-    return s;
+  function starPts(cx, cy, ro, ri, n) {
+    var p = [];
+    for (var i = 0; i < n * 2; i++) { var r = i % 2 ? ri : ro, a = Math.PI * i / n - Math.PI / 2; p.push(f(cx + r * Math.cos(a)) + "," + f(cy + r * Math.sin(a))); }
+    return p.join(" ");
   }
-  function card(id, zh, art) {
+  function spark(cx, cy, s) { return pg(f(cx) + "," + f(cy - s) + " " + f(cx + s * 0.28) + "," + f(cy - s * 0.28) + " " + f(cx + s) + "," + f(cy) + " " + f(cx + s * 0.28) + "," + f(cy + s * 0.28) + " " + f(cx) + "," + f(cy + s) + " " + f(cx - s * 0.28) + "," + f(cy + s * 0.28) + " " + f(cx - s) + "," + f(cy) + " " + f(cx - s * 0.28) + "," + f(cy - s * 0.28), 0.6, L); }
+  function bead(x, y1, y2, r) { return ln(x, y1, x, y2 - (r || 3), 0.7) + ci(x, y2, r || 3, 0.9, BG); }
+  function cross(cx, cy, r) { return ci(cx, cy, r, 0.9) + ln(cx - r * 1.6, cy, cx + r * 1.6, cy, 0.7) + ln(cx, cy - r * 1.6, cx, cy + r * 1.6, 0.7); }
+
+  function card(num, en, zh, art) {
+    var id = "h" + (uid++);
+    var hatch = '<pattern id="' + id + '" width="3.6" height="3.6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="3.6" stroke="' + L + '" stroke-width="0.7"/></pattern>';
+    art = art.replace(/HATCH/g, "url(#" + id + ")");
     return '<svg viewBox="0 0 210 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + zh + '">' +
-      '<defs><clipPath id="clip-' + id + '"><rect x="6" y="6" width="198" height="348"/></clipPath>' + dots("dk-" + id, K) + dots("dp-" + id, P) + '</defs>' +
-      '<rect width="210" height="360" fill="' + P + '"/>' +
-      '<g clip-path="url(#clip-' + id + ')">' + art.replace(/DK/g, "url(#dk-" + id + ")").replace(/DP/g, "url(#dp-" + id + ")") + nameStrip(zh) + '</g>' +
-      '<rect x="6" y="6" width="198" height="348" fill="none" stroke="' + K + '" stroke-width="2"/>' +
+      '<defs>' + hatch + '</defs>' +
+      '<rect width="210" height="360" fill="' + BG + '"/>' +
+      '<g fill="none" stroke="' + L + '" stroke-linecap="round" stroke-linejoin="round">' +
+      '<rect x="6" y="6" width="198" height="348" stroke-width="1.4"/><rect x="11" y="11" width="188" height="338" stroke-width="0.6"/>' +
+      ci(11, 11, 2.2, 0.7, BG) + ci(199, 11, 2.2, 0.7, BG) + ci(11, 349, 2.2, 0.7, BG) + ci(199, 349, 2.2, 0.7, BG) +
+      ln(20, 30, 90, 30, 0.6) + ln(120, 30, 190, 30, 0.6) + ci(105, 30, 13, 1.1, BG) + ci(105, 30, 16, 0.5) +
+      art +
+      ln(20, 312, 190, 312, 0.6) + spark(105, 312, 4) +
+      '</g>' +
+      '<text x="105" y="34" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="600" font-size="' + (num.length > 4 ? 8 : num.length > 3 ? 9 : 11) + '" fill="' + L + '">' + num + '</text>' +
+      '<text x="105" y="335" text-anchor="middle" font-family="Noto Serif SC, Songti SC, serif" font-weight="700" font-size="17" letter-spacing="6" fill="' + L + '">' + zh + '</text>' +
+      '<text x="105" y="346" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="600" font-size="7" letter-spacing="3" fill="' + L + '">' + en + '</text>' +
       '</svg>';
   }
 
   var CARDS = [
-    { id: "fool", zh: "愚者", note: "红日前的剪影，一脚已经迈出崖边；白玫瑰、行囊、小狗都在", art:
-      '<circle cx="168" cy="96" r="62" fill="' + R + '"/>' +
-      '<polygon points="6,250 6,354 160,354 150,205" fill="' + K + '"/>' +
-      '<polygon points="6,280 150,236 150,354 6,354" fill="DP"/>' +
-      '<text transform="translate(26 272) rotate(-17)" ' + NUM + ' font-size="12" letter-spacing="4" fill="' + P + '">THE FOOL</text>' +
-      '<text x="20" y="346" ' + NUM + ' font-size="96" fill="' + R + '">0</text>' +
-      '<circle cx="128" cy="122" r="11" fill="' + K + '"/>' +
-      '<polygon points="116,135 139,133 146,181 121,185" fill="' + K + '"/>' +
-      bar(126, 182, 106, 216, 9) + bar(141, 179, 172, 196, 9) + bar(172, 196, 184, 214, 8) +
-      bar(120, 141, 98, 114, 7) + '<circle cx="94" cy="108" r="6" fill="' + P + '" stroke="' + K + '" stroke-width="2"/>' +
-      bar(140, 142, 178, 102, 4) + '<circle cx="182" cy="98" r="9" fill="' + K + '"/>' +
-      '<polygon points="60,214 74,204 88,210 84,220 70,224" fill="' + K + '"/>' + bar(64, 222, 56, 230, 3) + bar(84, 218, 92, 226, 3) },
+    { num: "0", en: "THE FOOL", zh: "愚者", note: "红日、悬崖边缘、通向虚空的足迹、白玫瑰与行囊", art:
+      rays(146, 92, 26, 46, 36, 28, 0.7) + ci(146, 92, 22, 1.6) + ci(146, 92, 15, 0.8, T) +
+      bead(132, 116, 160, 3) + bead(160, 116, 176, 2.6) +
+      pg("20,300 122,206 122,300", 1.6, "HATCH") + pg("36,300 78,256 104,300", 0.8, T) + pg("20,300 52,268 60,300", 0.8) +
+      ln(122, 206, 122, 300, 0.8) + ln(122, 206, 190, 206, 0.8, ' stroke-dasharray="1.5 3.5"') +
+      ln(40, 284, 120, 208, 0.8, ' stroke-dasharray="1 4"') + spark(146, 200, 6) + spark(170, 214, 3.5) +
+      cross(66, 148, 9) + ci(66, 148, 14, 0.6) + ci(66, 148, 3, 0.8, L) + ln(66, 162, 66, 196, 0.8) + spark(66, 196, 3.5) +
+      ln(88, 104, 132, 178, 1.2) + ci(86, 100, 7, 1, "HATCH") + spark(36, 92, 4) + spark(178, 150, 3) + spark(44, 214, 3) },
 
-    { id: "magician", zh: "魔术师", note: "一手举杖指天、一手指地，黑色桌面上摆着四元素", art:
-      '<polygon points="6,6 70,6 204,214 204,290 6,60" fill="' + R + '"/>' +
-      '<path d="M118 48 C118 34 140 34 144 48 C148 62 170 62 170 48 C170 34 148 34 144 48 C140 62 118 62 118 48 Z" fill="none" stroke="' + K + '" stroke-width="6"/>' +
-      '<circle cx="112" cy="98" r="12" fill="' + K + '"/>' +
-      '<polygon points="98,113 126,113 132,204 92,204" fill="' + K + '"/>' +
-      bar(122, 120, 150, 70, 8) + bar(150, 70, 160, 50, 5, P) +
-      bar(100, 122, 72, 176, 8) + bar(72, 176, 66, 190, 5) +
-      '<rect x="6" y="204" width="198" height="150" fill="' + K + '"/>' +
-      '<rect x="6" y="258" width="198" height="68" fill="DP"/>' +
-      '<path d="M30 214 L54 214 L50 230 L34 230 Z" fill="' + P + '"/>' + bar(42, 230, 42, 240, 3, P) +
-      bar(82, 210, 82, 244, 4, P) + bar(74, 220, 90, 220, 4, P) +
-      bar(118, 212, 118, 244, 6, P) +
-      '<circle cx="160" cy="228" r="13" fill="' + R + '"/>' + star(160, 228, 8, 3.2, 5, P) +
-      '<text x="196" y="340" text-anchor="end" ' + NUM + ' font-size="96" fill="' + R + '">I</text>' +
-      '<text x="16" y="344" ' + NUM + ' font-size="11" letter-spacing="4" fill="' + P + '">THE MAGICIAN</text>' },
+    { num: "I", en: "THE MAGICIAN", zh: "魔术师", note: "无限符号、上下贯通的主轴（指天指地）、桌上杯剑杖币", art:
+      '<path d="M80 62 C80 50 101 50 105 62 C109 74 130 74 130 62 C130 50 109 50 105 62 C101 74 80 74 80 62 Z" stroke-width="1.6"/>' +
+      ln(105, 82, 105, 246, 1.2) + pg("99,92 105,82 111,92", 1.2) + pg("99,236 105,246 111,236", 1.2) +
+      ci(105, 160, 54, 0.8) + ci(105, 160, 42, 0.6, "none", ' stroke-dasharray="2 3"') + ln(38, 160, 172, 160, 0.6) +
+      pg("105,106 159,160 105,214 51,160", 1.4) + pg("105,106 159,160 51,160", 0.6, T) + ci(105, 160, 8, 1.2, BG) + ci(105, 160, 2.5, 0.8, L) +
+      ln(28, 256, 182, 256, 1.6) + pg("34,256 176,256 166,284 44,284", 0.8, "HATCH") +
+      ln(46, 216, 46, 254, 1.2) + ci(46, 213, 3, 1, BG) +
+      pg("72,222 92,222 86,236 78,236", 1.2, T) + ln(82, 236, 82, 254, 1) + ln(76, 254, 88, 254, 1) +
+      ln(128, 212, 128, 254, 1.2) + ln(121, 222, 135, 222, 1.2) + pg("128,206 131,212 128,218 125,212", 0.8, L) +
+      ci(164, 240, 12, 1.2) + pg(starPts(164, 240, 9, 3.6, 5), 0.8, T) +
+      bead(62, 284, 300, 2.6) + bead(148, 284, 300, 2.6) + spark(36, 74, 4) + spark(176, 78, 4) },
 
-    { id: "tower", zh: "高塔", note: "红楔般的闪电刺中倾斜的塔顶，王冠飞落，两人倒栽坠下", art:
-      '<polygon points="6,354 6,230 204,150 204,354" fill="DK"/>' +
-      '<polygon points="58,354 134,354 154,104 100,90" fill="' + K + '"/>' +
-      '<polygon points="100,90 106,78 114,92 122,80 130,96 138,84 146,100 154,104" fill="' + K + '"/>' +
-      '<polygon points="206,22 206,58 128,100" fill="' + R + '"/>' +
-      '<polygon points="160,112 172,98 176,112 188,102 186,124 162,126" fill="' + R + '" transform="rotate(28 174 112)"/>' +
-      '<rect x="112" y="140" width="8" height="18" fill="' + P + '" transform="rotate(5 116 149)"/>' +
-      '<rect x="102" y="200" width="8" height="18" fill="' + P + '" transform="rotate(5 106 209)"/>' +
-      '<text transform="translate(98 330) rotate(-85)" ' + NUM + ' font-size="44" fill="' + P + '">XVI</text>' +
-      '<circle cx="36" cy="236" r="9" fill="' + K + '"/>' +
-      '<polygon points="27,224 46,222 50,188 29,186" fill="' + K + '"/>' + bar(34, 188, 24, 160, 7) + bar(45, 188, 60, 166, 7) + bar(30, 220, 14, 238, 6) + bar(46, 220, 56, 244, 6) +
-      '<circle cx="182" cy="268" r="9" fill="' + K + '"/>' +
-      '<polygon points="171,258 190,254 184,222 166,226" fill="' + K + '"/>' + bar(170, 226, 158, 200, 7) + bar(182, 224, 196, 204, 7) + bar(188, 254, 200, 274, 6) + bar(172, 256, 164, 280, 6) +
-      '<rect x="148" y="332" width="56" height="22" fill="' + P + '"/><text x="154" y="347" ' + NUM + ' font-size="9" letter-spacing="2" fill="' + K + '">THE TOWER</text>' },
+    { num: "II", en: "HIGH PRIESTESS", zh: "女祭司", note: "黑白双柱、三相月冠、半卷经卷、脚下新月、石榴帷幕", art:
+      '<path d="M43 82 A62 40 0 0 1 167 82" stroke-width="1"/>' +
+      '<rect x="32" y="82" width="22" height="214" stroke-width="1.4" fill="HATCH"/><rect x="156" y="82" width="22" height="214" stroke-width="1.4"/>' +
+      pg("28,82 58,82 52,74 34,74", 1) + pg("152,82 182,82 176,74 158,74", 1) +
+      ci(43, 110, 7, 1, BG) + ci(167, 110, 7, 1, BG) +
+      ln(54, 96, 156, 96, 0.6) + ln(54, 270, 156, 270, 0.6) +
+      ci(70, 120, 2, 0.6, T) + ci(140, 120, 2, 0.6, T) + ci(70, 150, 2, 0.6, T) + ci(140, 150, 2, 0.6, T) + ci(70, 180, 2, 0.6, T) + ci(140, 180, 2, 0.6, T) + ci(70, 210, 2, 0.6, T) + ci(140, 210, 2, 0.6, T) + ci(70, 240, 2, 0.6, T) + ci(140, 240, 2, 0.6, T) +
+      ci(105, 104, 8, 1.4, T) + '<path d="M90 96 A9 9 0 1 0 90 112 A6 8 0 1 1 90 96 Z" stroke-width="1"/>' + '<path d="M120 96 A9 9 0 1 1 120 112 A6 8 0 1 0 120 96 Z" stroke-width="1"/>' +
+      ln(105, 112, 105, 252, 0.8) + ln(97, 140, 113, 140, 1.2) + ln(105, 132, 105, 148, 1.2) +
+      '<rect x="88" y="176" width="34" height="20" stroke-width="1.2" fill="' + BG + '"/>' + ln(93, 183, 117, 183, 0.6) + ln(93, 189, 111, 189, 0.6) + ci(88, 186, 3, 0.8, BG) + ci(122, 186, 3, 0.8, BG) +
+      ci(105, 272, 17, 1.4, T) + ci(112, 266, 15, 0, BG) + '<circle cx="105" cy="272" r="17" stroke-width="1.4"/>' +
+      bead(43, 296, 304, 2.2) + bead(167, 296, 304, 2.2) },
 
-    { id: "star", zh: "星星", note: "一颗大红星压在右上，七颗小星沿斜线落下，跪地的人两手倒水", art:
-      star(150, 92, 74, 26, 8, R) +
-      star(54, 150, 9, 3.6, 8, K) + star(80, 124, 8, 3.2, 8, K) + star(36, 186, 8, 3.2, 8, K) +
-      star(106, 168, 8, 3.2, 8, K) + star(64, 206, 7, 3, 8, K) + star(140, 196, 7, 3, 8, K) + star(26, 112, 7, 3, 8, K) +
-      '<polygon points="6,300 112,292 112,354 6,354" fill="' + K + '"/>' +
-      '<rect x="112" y="300" width="92" height="54" fill="' + K + '"/>' +
-      bar(118, 322, 204, 322, 2, P) + bar(118, 334, 204, 334, 2, P) + bar(118, 346, 204, 346, 2, P) + '<text x="120" y="314" ' + NUM + ' font-size="10" letter-spacing="3" fill="' + P + '">THE STAR</text>' +
-      '<circle cx="92" cy="226" r="11" fill="' + K + '"/>' +
-      '<polygon points="80,240 104,240 110,282 78,284" fill="' + K + '"/>' +
-      bar(84, 282, 64, 296, 9) + bar(104, 280, 128, 290, 9) +
-      bar(84, 248, 54, 258, 7) + '<polygon points="38,250 56,250 54,268 40,268" fill="' + R + '"/>' + bar(44, 272, 34, 298, 4) +
-      bar(102, 248, 136, 260, 7) + '<polygon points="134,252 152,252 150,270 136,270" fill="' + R + '"/>' + bar(148, 274, 160, 302, 4) +
-      '<text x="14" y="346" ' + NUM + ' font-size="40" fill="' + R + '">XVII</text>' },
+    { num: "XVI", en: "THE TOWER", zh: "高塔", note: "闪电劈中塔顶、王冠飞落、坠落的火星", art:
+      pg("82,300 128,300 122,112 88,112", 1.6) + ln(105, 112, 105, 300, 0.6) +
+      ln(86, 150, 124, 150, 0.6) + ln(84, 190, 126, 190, 0.6) + ln(83, 230, 127, 230, 0.6) + ln(82, 270, 128, 270, 0.6) +
+      '<rect x="96" y="160" width="7" height="16" stroke-width="0.8" fill="' + T + '"/><rect x="108" y="200" width="7" height="16" stroke-width="0.8" fill="' + T + '"/><rect x="96" y="240" width="7" height="16" stroke-width="0.8" fill="' + T + '"/>' +
+      '<polyline points="88,112 88,102 96,102 96,112 101,112 101,102 109,102 109,112 114,112 114,102 122,102 122,112" stroke-width="1.2"/>' +
+      pg("188,44 150,80 166,82 128,112 146,88 132,86 166,44", 1.2, "HATCH") +
+      rays(128, 108, 8, 20, 14, 12, 0.7) +
+      '<g transform="rotate(26 156 132)">' + pg("140,140 172,140 176,122 166,130 156,118 146,130 136,122", 1.2, T) + ci(156, 118, 2.4, 0.8, L) + ci(136, 122, 2, 0.8, L) + ci(176, 122, 2, 0.8, L) + '</g>' +
+      spark(56, 136, 5) + spark(160, 190, 4) + spark(48, 226, 3.5) + spark(168, 248, 5) + spark(64, 180, 3) +
+      bead(62, 150, 206, 2.8) + bead(150, 156, 230, 2.8) +
+      pg("20,300 50,266 78,300", 1, "HATCH") + pg("132,300 164,262 190,300", 1, T) + ln(20, 300, 190, 300, 1) },
 
-    { id: "sun", zh: "太阳", note: "巨大的红日与黑色光楔，孩子张开双臂骑在白马上，红旗斜飞", art:
-      wedges(124, 74, 82, 128, 12, 7, K) +
-      '<circle cx="124" cy="74" r="72" fill="' + R + '"/>' +
-      '<rect x="6" y="196" width="198" height="18" fill="' + K + '"/>' +
-      '<circle cx="62" cy="186" r="9" fill="' + K + '"/><circle cx="62" cy="186" r="3.5" fill="' + R + '"/>' +
-      '<circle cx="150" cy="186" r="9" fill="' + K + '"/><circle cx="150" cy="186" r="3.5" fill="' + R + '"/>' +
-      '<circle cx="186" cy="186" r="9" fill="' + K + '"/><circle cx="186" cy="186" r="3.5" fill="' + R + '"/>' +
-      '<polygon points="34,270 148,264 154,296 42,302" fill="' + P + '" stroke="' + K + '" stroke-width="3"/>' +
-      '<polygon points="146,266 176,232 196,240 160,294" fill="' + P + '" stroke="' + K + '" stroke-width="3"/>' +
-      bar(52, 300, 44, 326, 7) + bar(72, 300, 80, 326, 7) + bar(134, 296, 126, 326, 7) + bar(150, 294, 162, 324, 7) +
-      '<circle cx="94" cy="226" r="11" fill="' + K + '"/>' +
-      '<polygon points="84,239 104,239 106,270 84,270" fill="' + K + '"/>' +
-      bar(56, 236, 134, 236, 7) +
-      bar(134, 236, 164, 176, 3) + '<polygon points="164,176 206,190 206,212 160,196" fill="' + R + '"/>' +
-      '<rect x="6" y="328" width="198" height="26" fill="' + K + '"/>' +
-      '<text x="16" y="346" ' + NUM + ' font-size="10" letter-spacing="4" fill="' + P + '">THE SUN</text>' +
-      '<text x="198" y="349" text-anchor="end" ' + NUM + ' font-size="22" fill="' + R + '">XIX</text>' }
+    { num: "XVII", en: "THE STAR", zh: "星星", note: "一颗八芒大星与七颗小星、两只水瓶、流入池中与大地的水", art:
+      pg(starPts(105, 98, 48, 17, 8), 1.6) + ci(105, 98, 12, 1, T) + ci(105, 98, 26, 0.6) + ln(105, 44, 105, 152, 0.6) + ln(51, 98, 159, 98, 0.6) +
+      pg(starPts(38, 62, 8, 3, 8), 0.8, T) + pg(starPts(172, 62, 8, 3, 8), 0.8, T) + pg(starPts(28, 120, 7, 2.6, 8), 0.8, T) + pg(starPts(182, 120, 7, 2.6, 8), 0.8, T) +
+      pg(starPts(46, 172, 7, 2.6, 8), 0.8, T) + pg(starPts(164, 172, 7, 2.6, 8), 0.8, T) + pg(starPts(105, 176, 6, 2.2, 8), 0.8, T) +
+      bead(80, 136, 186, 3) + bead(130, 136, 196, 3) +
+      ln(105, 184, 105, 300, 0.8, ' stroke-dasharray="1 4"') + pg("105,226 112,240 105,254 98,240", 1, BG) +
+      pg("44,212 62,212 66,226 58,240 48,240 40,226", 1.2, "HATCH") + pg("148,212 166,212 170,226 162,240 152,240 144,226", 1.2, "HATCH") +
+      '<path d="M50 240 C46 256 38 266 36 284" stroke-width="0.9" stroke-dasharray="2 3"/>' + '<path d="M160 240 C164 256 166 270 160 290" stroke-width="0.9" stroke-dasharray="2 3"/>' +
+      pg("20,300 62,272 96,300", 1, T) +
+      '<path d="M116 300 A42 16 0 0 1 200 300" stroke-width="1"/><path d="M130 300 A28 10 0 0 1 186 300" stroke-width="0.8"/><path d="M146 300 A12 5 0 0 1 170 300" stroke-width="0.7"/>' +
+      ln(20, 300, 190, 300, 1) },
+
+    { num: "XVIII", en: "THE MOON", zh: "月亮", note: "月亮与新月、落下的露珠、双塔、曲折小路、狗与狼、池中龙虾", art:
+      rays(105, 104, 40, 56, 48, 36, 0.6) + ci(105, 104, 34, 0, T) + ci(118, 98, 30, 0, BG) + ci(105, 104, 34, 1.6) + ci(105, 104, 24, 0.5, "none", ' stroke-dasharray="1.5 3"') +
+      pg("78,146 81,152 78,158 75,152", 0.8, L) + pg("105,156 108,162 105,168 102,162", 0.8, L) + pg("132,146 135,152 132,158 129,152", 0.8, L) +
+      '<rect x="24" y="176" width="20" height="96" stroke-width="1.4" fill="HATCH"/>' + pg("22,176 34,160 46,176", 1.2) +
+      '<rect x="166" y="176" width="20" height="96" stroke-width="1.4"/>' + pg("164,176 176,160 188,176", 1.2, T) +
+      '<polyline points="105,262 92,244 116,224 96,206 110,190 104,178" stroke-width="1.2"/>' + ln(44, 272, 166, 272, 0.6) +
+      pg("58,264 70,238 82,264", 1.2, "HATCH") + pg("128,264 140,238 152,264", 1.2, T) +
+      '<path d="M63 300 A42 24 0 0 1 147 300" stroke-width="1.2" fill="' + T + '"/>' +
+      ci(105, 290, 4, 1, L) + ln(101, 287, 94, 279, 0.9) + ln(109, 287, 116, 279, 0.9) + ln(105, 294, 105, 300, 0.9) +
+      spark(36, 70, 4) + spark(176, 70, 4) + ln(20, 300, 190, 300, 1) },
+
+    { num: "XIX", en: "THE SUN", zh: "太阳", note: "放射的太阳、墙头四朵向日葵、斜飞的旗帜", art:
+      rays(105, 108, 40, 70, 56, 40, 0.7) + ci(105, 108, 34, 1.6) + ci(105, 108, 26, 0.8, T) + ci(105, 108, 16, 0.8) + cross(105, 108, 5) +
+      bead(76, 140, 176, 3) + bead(134, 140, 182, 3) +
+      ci(40, 208, 6, 1, T) + rays(40, 208, 8, 13, 11, 14, 0.7) + ci(78, 208, 6, 1, T) + rays(78, 208, 8, 13, 11, 14, 0.7) +
+      ci(132, 208, 6, 1, T) + rays(132, 208, 8, 13, 11, 14, 0.7) + ci(170, 208, 6, 1, T) + rays(170, 208, 8, 13, 11, 14, 0.7) +
+      '<rect x="20" y="224" width="170" height="16" stroke-width="1.2" fill="HATCH"/>' +
+      ln(56, 244, 56, 300, 1.4) + ci(56, 242, 2.6, 1, L) + pg("56,250 166,262 56,286", 1.2, T) + ln(56, 268, 166, 262, 0.6) +
+      spark(176, 284, 4) + spark(30, 264, 3) + ln(20, 300, 190, 300, 1) }
   ];
 
-  var BACK = '<svg viewBox="0 0 210 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="牌背">' +
-    '<rect width="210" height="360" fill="' + K + '"/>' +
-    '<line x1="6" y1="354" x2="204" y2="6" stroke="' + P + '" stroke-width="1" opacity=".4"/>' +
-    '<line x1="6" y1="300" x2="204" y2="60" stroke="' + P + '" stroke-width="1" opacity=".25"/>' +
-    '<circle cx="105" cy="180" r="56" fill="' + P + '"/>' +
-    '<polygon points="6,52 6,92 112,176" fill="' + R + '"/>' +
-    '<polygon points="204,308 204,268 98,184" fill="' + R + '"/>' +
-    '<circle cx="105" cy="180" r="4" fill="' + K + '"/>' +
-    '<rect x="6" y="6" width="198" height="348" fill="none" stroke="' + P + '" stroke-width="2"/>' +
-    '</svg>';
+  var BACK = (function () {
+    var s = '<svg viewBox="0 0 210 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="牌背"><rect width="210" height="360" fill="' + BG + '"/>' +
+      '<g fill="none" stroke="' + L + '" stroke-linecap="round" stroke-linejoin="round">' +
+      '<rect x="6" y="6" width="198" height="348" stroke-width="1.4"/><rect x="11" y="11" width="188" height="338" stroke-width="0.6"/>' +
+      '<path d="M11 41 A30 30 0 0 0 41 11" stroke-width="0.8"/><path d="M199 41 A30 30 0 0 1 169 11" stroke-width="0.8"/><path d="M11 319 A30 30 0 0 1 41 349" stroke-width="0.8"/><path d="M199 319 A30 30 0 0 0 169 349" stroke-width="0.8"/>' +
+      rays(105, 180, 64, 92, 78, 48, 0.6) + ci(105, 180, 60, 1.4) + ci(105, 180, 52, 0.6) +
+      pg(starPts(105, 180, 46, 23, 3).split(" ").filter(function (_, i) { return i % 2 === 0; }).join(" "), 1.2, "none") +
+      pg((function () { var p = []; for (var i = 0; i < 3; i++) { var a = Math.PI / 2 + 2 * Math.PI * i / 3; p.push(f(105 + 46 * Math.cos(a)) + "," + f(180 + 46 * Math.sin(a))); } return p.join(" "); })(), 1.2, "none") +
+      ci(105, 180, 23, 1) + ci(105, 180, 8, 1, BG) + ci(105, 180, 2.5, 0.8, L) +
+      ln(105, 20, 105, 100, 0.8) + ln(105, 260, 105, 340, 0.8) +
+      ci(105, 100, 3, 1, BG) + ci(105, 260, 3, 1, BG) + spark(105, 40, 6) + spark(105, 320, 6) +
+      spark(40, 180, 4) + spark(170, 180, 4) + '</g></svg>';
+    return s;
+  })();
 
   var html = CARDS.map(function (c) {
-    return '<figure><button class="cardbtn" type="button" aria-pressed="false" aria-label="' + c.zh + '，点击查看逆位">' + card(c.id, c.zh, c.art) + '</button>' +
+    return '<figure><button class="cardbtn" type="button" aria-pressed="false" aria-label="' + c.zh + '，点击查看逆位">' + card(c.num, c.en, c.zh, c.art) + '</button>' +
       '<figcaption><b>' + c.zh + '</b> · ' + c.note + '</figcaption></figure>';
   }).join("") +
-    '<figure><button class="cardbtn" type="button" aria-pressed="false" aria-label="牌背，点击旋转">' + BACK + '</button><figcaption><b>牌背</b> · 两道红楔刺入白圆，中心对称</figcaption></figure>';
+    '<figure><button class="cardbtn" type="button" aria-pressed="false" aria-label="牌背，点击旋转">' + BACK + '</button><figcaption><b>牌背</b> · 六芒星与放射圆，中心对称</figcaption></figure>';
   document.getElementById("grid").innerHTML = html;
   document.querySelectorAll(".cardbtn").forEach(function (b) {
     b.addEventListener("click", function () { b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") === "true" ? "false" : "true"); });
