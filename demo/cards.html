@@ -41,9 +41,9 @@ figcaption b { color: var(--fg); font-weight: 700; }
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Mo Xing Tarot · Major Arcana · Draft 06</span>
-    <h1>墨星牌 · 神圣几何样张</h1>
-    <p>第六稿贴近“神圣几何”手绘的做法：不再散布独立尖刺，而是让三角碎面一片接一片共用边生长成一整团沿对角线坠落的晶体。每片碎面带内缩的平行副线、排线角楔或浅橙底，外面叠着越过角点的错位方框、长短不齐的放射、断开的粗弧、垂下的珠链和散落的四角星、小十字、准星。每张牌的核心象征都从碎晶中长出来，不画人。点击任意一张可以看逆位效果。</p>
+    <span class="eyebrow">Mo Xing Tarot · Major Arcana · Draft 06 · 22 / 22</span>
+    <h1>墨星牌 · 神圣几何 · 22 张大牌全部完成</h1>
+    <p>按第六稿确认的方向补齐了全部 22 张大牌和牌背：三角碎面共用边生长成一整团沿对角线流动的晶体，每片碎面带内缩的平行副线、排线角楔或浅橙底，外面叠着越过角点的错位方框、长短不齐的放射、断开的粗弧、垂下的珠链和散落的四角星、小十字、准星。每张牌的核心象征都从碎晶中长出来，不画人。牌面生成代码与演示页共用同一段。点击任意一张可以看逆位效果。</p>
   </header>
 
   <section class="specs" aria-label="设计规范">
@@ -55,18 +55,19 @@ figcaption b { color: var(--fg); font-weight: 700; }
 
   <section class="grid" id="grid" aria-label="样张"></section>
 
-  <p class="foot">确认这一稿方向后，按同一套线宽、配色和版式补齐 22 张大牌。</p>
+  <p class="foot">22 张大牌与牌背已按同一套线宽、配色和版式完成，并已接入占卜台演示页（index.html）的翻牌牌面。</p>
 </div>
 
 <script>
-(function () {
+// ART-BEGIN 墨星牌牌面生成器。cards.html 与 index.html 共用这一段，改动后用 scratchpad 的 sync.js 同步到 index.html
+var MoXingArt = (function () {
   "use strict";
   // 纸色、深朱红主线、橙色副线、浅橙填色
   var BG = "#f7f1ea", R = "#c8321f", O = "#e9762f", P = "#f8d6bb";
   var uid = 0, D2R = Math.PI / 180;
   function f(n) { return (+n).toFixed(1); }
   // 固定种子随机数，保证每次渲染一致
-  function rnd(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function srnd(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
   function pts(a) { return a.map(function (p) { return f(p[0]) + "," + f(p[1]); }).join(" "); }
   function ln(x1, y1, x2, y2, w, c, ex) { return '<line x1="' + f(x1) + '" y1="' + f(y1) + '" x2="' + f(x2) + '" y2="' + f(y2) + '" stroke="' + (c || R) + '" stroke-width="' + (w || 0.8) + '"' + (ex || "") + '/>'; }
   function ci(cx, cy, r, w, c, fill, ex) { return '<circle cx="' + f(cx) + '" cy="' + f(cy) + '" r="' + f(r) + '" stroke="' + (c || R) + '" stroke-width="' + (w == null ? 0.8 : w) + '" fill="' + (fill || "none") + '"' + (ex || "") + '/>'; }
@@ -109,7 +110,7 @@ figcaption b { color: var(--fg); font-weight: 700; }
   function drop(x, y, len, k, c) { var r = (k || 0) % 4 === 1 ? 1.8 : 2.6; return ln(x, y, x, y + len - r, 0.7, c || R) + bead(x, y + len, k, c); }
   // 一排长短不一的垂线，挂在 y 这条边下面
   function fringe(x1, x2, y, seed, n, lmin, lmax) {
-    var rng = rnd(seed), s = "";
+    var rng = srnd(seed), s = "";
     for (var i = 0; i < n; i++) { var x = x1 + (x2 - x1) * ((i + 0.5) / n + (rng() - 0.5) * 0.6 / n), len = lmin + rng() * (lmax - lmin), k = Math.floor(rng() * 4), c = rng() < 0.3 ? O : R; s += drop(x, y, len, k, c); if (rng() < 0.4) s += dot(x, y, 1.1, c); }
     return s;
   }
@@ -133,7 +134,7 @@ figcaption b { color: var(--fg); font-weight: 700; }
   }
   // 放射日轮：断开的粗弧与细弧，长短不齐的射线，偶尔换成薄片或点尾
   function halo(cx, cy, r, seed, o) {
-    o = o || {}; var rng = rnd(seed), s = "", a0 = o.a0 == null ? 0 : o.a0, a1 = o.a1 == null ? 360 : o.a1, n = o.n || 28, mn = o.min || 5, mx = o.max || 22, sp = a1 - a0;
+    o = o || {}; var rng = srnd(seed), s = "", a0 = o.a0 == null ? 0 : o.a0, a1 = o.a1 == null ? 360 : o.a1, n = o.n || 28, mn = o.min || 5, mx = o.max || 22, sp = a1 - a0;
     s += arc(cx, cy, r, a0 + sp * 0.08, a0 + sp * 0.52, o.aw || 1.7, R) + arc(cx, cy, r + 4, a0 + sp * 0.56, a1 - sp * 0.05, 0.55, O) + arc(cx, cy, r + 1.5, a0 + sp * 0.6, a0 + sp * 0.8, 1, R);
     for (var i = 0; i < n; i++) {
       var a = (a0 + sp * (i + 0.5) / n + (rng() - 0.5) * 5) * D2R, c = Math.cos(a), sn = Math.sin(a), r0 = r + 7 + rng() * 4, l = mn + rng() * (mx - mn); if (i % 5 === 2) l *= 1.7;
@@ -144,7 +145,7 @@ figcaption b { color: var(--fg); font-weight: 700; }
   }
   // 错位方框：四边越过角点、长短不一，一角有准星，内侧两边有错开的副线
   function frame(x, y, w, h, c, wd, seed) {
-    var rng = rnd(seed || 1), e = function () { return 4 + rng() * 10; }, c2 = c === O ? R : O, s = ""; c = c || R; wd = wd || 1;
+    var rng = srnd(seed || 1), e = function () { return 4 + rng() * 10; }, c2 = c === O ? R : O, s = ""; c = c || R; wd = wd || 1;
     s += ln(x - e(), y, x + w + e(), y, wd, c) + ln(x - e(), y + h, x + w + e(), y + h, wd, c) + ln(x, y - e(), x, y + h + e(), wd, c) + ln(x + w, y - e(), x + w, y + h + e(), wd, c);
     s += ln(x + 3.5, y + 3.5, x + w * (0.4 + rng() * 0.4), y + 3.5, 0.5, c2) + ln(x + w - 3.5, y + h - 3.5, x + w - 3.5, y + h * (0.2 + rng() * 0.4), 0.5, c2);
     var k = Math.floor(rng() * 4), cx = k % 2 ? x + w : x, cy = k < 2 ? y : y + h;
@@ -154,7 +155,7 @@ figcaption b { color: var(--fg); font-weight: 700; }
   function ladder(x, y, w, n, gap, c) { var s = ""; for (var i = 0; i < n; i++) { var e = i % 2 ? 3 : 0; s += ln(x - e, y + i * gap, x + w + (i % 3 === 1 ? 5 : 0), y + i * gap, i % 2 ? 0.5 : 1, i % 2 ? O : (c || R)); if (i % 3 === 1) s += dot(x + w + 5, y + i * gap, 1); } return s; }
   // 碎晶生长：从起始三角开始，每次在一条已有边上向外长出新三角，方向朝 dir 偏置；先铺填色层，再画线条层
   function crystal(seed, A, B, C, n, dir, o) {
-    o = o || {}; var rng = rnd(seed), tris = [[A, B, C]], open = [], dv = [Math.cos(dir * D2R), Math.sin(dir * D2R)], bd = o.bounds || [6, 6, 204, 312], g = 0, i;
+    o = o || {}; var rng = srnd(seed), tris = [[A, B, C]], open = [], dv = [Math.cos(dir * D2R), Math.sin(dir * D2R)], bd = o.bounds || [6, 6, 204, 312], g = 0, i;
     for (i = 0; i < 3; i++) open.push([tris[0][i], tris[0][(i + 1) % 3], tris[0][(i + 2) % 3]]);
     while (tris.length <= n && open.length && g++ < n * 8) {
       var e = open.splice(open.length - 1 - Math.floor(rng() * Math.min(open.length, o.k || 4)), 1)[0], p = e[0], q = e[1], r = e[2], dx = q[0] - p[0], dy = q[1] - p[1], L = Math.hypot(dx, dy);
@@ -182,7 +183,10 @@ figcaption b { color: var(--fg); font-weight: 700; }
     var fl = "", st = "";
     pieces.forEach(function (t, j) {
       var r1 = rng(), r2 = rng(), ar = Math.abs(area2(t)) / 2, s2 = { w: j === 0 ? (o.w0 || 1.7) : 0.9 + rng() * 0.8, c: r2 < 0.22 ? O : R };
-      if (r1 < 0.3) { s2.wedge = Math.floor(rng() * 3); s2.hk = r2 < 0.4 ? 1 : r2 < 0.7 ? 0 : 2; s2.inset = true; }
+      // tone: dark 多用红排线，light 多留白和浅橙
+      if (o.tone === "dark" && r1 < 0.42) { s2.fill = "H"; s2.hk = r2 < 0.7 ? 1 : 0; s2.inset = r2 < 0.3; }
+      else if (o.tone === "light" && r1 < 0.42) { s2.inset = true; if (r2 < 0.35) s2.fill = "P"; }
+      else if (r1 < 0.3) { s2.wedge = Math.floor(rng() * 3); s2.hk = r2 < 0.4 ? 1 : r2 < 0.7 ? 0 : 2; s2.inset = true; }
       else if (r1 < 0.44) { s2.fill = "P"; s2.inset = true; }
       else if (r1 < 0.52 && ar < 220) s2.fill = "O";
       else if (r1 < 0.62) { s2.fill = "H"; s2.hk = r2 < 0.5 ? 1 : 0; }
@@ -197,8 +201,28 @@ figcaption b { color: var(--fg); font-weight: 700; }
   }
   // 垫一道纸色粗线再画主线，让关键线条从碎晶里切出来
   function knock(a, w, c) { return pl(a, (w || 2) + 3, BG) + pl(a, w || 2, c || R); }
+  // 左右镜像：把 x<105 的一半复制到右边，用于严格对称的牌
+  function mirror(s) { return s + '<g transform="matrix(-1 0 0 1 210 0)">' + s + '</g>'; }
+  // 杯：开口向上的半圆加杯脚
+  function cup(cx, cy, r) { return path("M" + f(cx - r) + " " + f(cy) + " a" + f(r) + " " + f(r) + " 0 0 0 " + f(2 * r) + " 0 Z", 1.6, R, P) + path("M" + f(cx - r * 0.64) + " " + f(cy) + " a" + f(r * 0.64) + " " + f(r * 0.64) + " 0 0 0 " + f(r * 1.28) + " 0", 0.5, O) + ln(cx, cy + r, cx, cy + r * 2, 1) + ln(cx - r * 0.64, cy + r * 2, cx + r * 0.64, cy + r * 2, 1.2) + ln(cx - r - 4, cy, cx + r + 4, cy, 0.6, O); }
+  function el(cx, cy, rx, ry, w, c, fl) { return '<ellipse cx="' + f(cx) + '" cy="' + f(cy) + '" rx="' + f(rx) + '" ry="' + f(ry) + '" stroke="' + (c || R) + '" stroke-width="' + (w || 1) + '" fill="' + (fl || "none") + '"/>'; }
+  // 五角星：rot 为第一个角的方向，90 则尖朝下
+  function star5(cx, cy, r, rot, w, c, fl) { var p = []; for (var i = 0; i < 5; i++) p.push(onC(cx, cy, r, rot + i * 72)); return pg([p[0], p[2], p[4], p[1], p[3]], w || 1.8, c, fl); }
+  // 麦穗：向上的茎，顶端两侧交错的小薄片
+  function stalk(x, y, len, c) { var s = ln(x, y, x, y - len, 0.8, c || R), top = y - len; for (var i = 0; i < 3; i++) { var yy = top + 2 + i * 4; s += sliver(x - 4.5, yy - 3, x, yy, 1.3) + sliver(x + 4.5, yy - 1, x, yy + 2, 1.3); } return s + dot(x, top, 1); }
+  // 四角四生物：0 天使（星与双翼）、1 鹰（V 形双翼）、2 狮（光鬃）、3 牛（环与双角），各带一个小方框
+  function creature(k, x, y, seed) {
+    var s = frame(x - 13, y - 13, 26, 26, O, 0.5, seed || 300 + k);
+    if (k === 0) s += sliver(x - 13, y - 7, x - 3, y + 1, 2.2) + sliver(x + 13, y - 7, x + 3, y + 1, 2.2) + spark(x, y + 1, 4.5) + ci(x, y - 8, 2.2, 0.9, R, BG);
+    else if (k === 1) s += sliver(x - 13, y - 9, x, y + 3, 2.4) + sliver(x + 13, y - 9, x, y + 3, 2.4) + dot(x, y - 5, 1.8) + ln(x, y + 3, x, y + 10, 0.9) + ln(x - 3, y + 10, x + 3, y + 10, 0.9);
+    else if (k === 2) s += halo(x, y, 3, 310, { n: 14, max: 7, min: 3, aw: 0.01 }) + ci(x, y, 4.5, 1.3, R, P) + dot(x, y, 1.3);
+    else s += ci(x, y + 2, 5, 1.3, R, P) + arc(x - 6, y - 2, 5, 170, 300, 1.3) + arc(x + 6, y - 2, 5, 240, 370, 1.3) + dot(x, y + 2, 1.3);
+    return s;
+  }
+  // 椭圆花环：沿椭圆排一圈切向薄片，交替偏向内外
+  function wreath(cx, cy, rx, ry, n) { var s = ""; for (var i = 0; i < n; i++) { var t = i / n * Math.PI * 2, px = cx + rx * Math.cos(t), py = cy + ry * Math.sin(t), tx = -rx * Math.sin(t), ty = ry * Math.cos(t), L = Math.hypot(tx, ty) || 1, o = i % 2 ? 3 : -3; tx /= L; ty /= L; var nx = Math.cos(t) * o, ny = Math.sin(t) * o; s += sliver(px + tx * 10 + nx, py + ty * 10 + ny, px + nx, py + ny, 2.4, i % 3 ? O : R); } return s; }
   // 两个圆叠出的月牙：浅橙月牙面，叠加的圆只留细线
-  function crescent(cx, cy, r, dx, dy, r2) { var id = "m" + (uid++); return '<defs><clipPath id="' + id + '"><circle cx="' + f(cx) + '" cy="' + f(cy) + '" r="' + f(r) + '"/></clipPath></defs>' + ci(cx, cy, r, 0, R, P) + ci(cx + dx, cy + dy, r2, 0, R, BG, ' clip-path="url(#' + id + ')"') + ci(cx, cy, r, 1.8) + ci(cx + dx, cy + dy, r2, 0.6, O); }
+  function crescent(cx, cy, r, dx, dy, r2) { return '<defs><clipPath id="MOONCLIP"><circle cx="' + f(cx) + '" cy="' + f(cy) + '" r="' + f(r) + '"/></clipPath></defs>' + ci(cx, cy, r, 0, R, P) + ci(cx + dx, cy + dy, r2, 0, R, BG, ' clip-path="url(#MOONCLIP)"') + ci(cx, cy, r, 1.8) + ci(cx + dx, cy + dy, r2, 0.6, O); }
 
   function defs(id) {
     return '<pattern id="' + id + '" width="2.6" height="2.6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="2.6" stroke="' + O + '" stroke-width="0.55"/></pattern>' +
@@ -206,7 +230,7 @@ figcaption b { color: var(--fg); font-weight: 700; }
       '<pattern id="' + id + 'h" width="2.4" height="2.4" patternUnits="userSpaceOnUse" patternTransform="rotate(5)"><line x1="0" y1="0" x2="2.4" y2="0" stroke="' + O + '" stroke-width="0.5"/></pattern>' +
       '<clipPath id="' + id + 'c"><rect x="6" y="6" width="198" height="306"/></clipPath>';
   }
-  function fill(art, id) { return art.replace(/HATCHR/g, "url(#" + id + "r)").replace(/HATCHH/g, "url(#" + id + "h)").replace(/HATCH/g, "url(#" + id + ")"); }
+  function fill(art, id) { return art.replace(/HATCHR/g, "url(#" + id + "r)").replace(/HATCHH/g, "url(#" + id + "h)").replace(/HATCH/g, "url(#" + id + ")").replace(/MOONCLIP/g, id + "m"); }
 
   function card(num, en, zh, art) {
     var id = "h" + (uid++);
@@ -225,7 +249,7 @@ figcaption b { color: var(--fg); font-weight: 700; }
       '</svg>';
   }
 
-  var CARDS = [
+  var ARCANA = [
     { num: "0", en: "THE FOOL", zh: "愚者", note: "核心象征：右上日轮、左下碎晶崖壁与垂直崖面、崖顶准星一点和坠入虚空的珠链、左侧玫瑰准星带刺茎、崖顶小犬碎晶", art:
       frame(96, 36, 94, 90, O, 0.7, 101) + frame(108, 48, 84, 74, R, 0.9, 102) +
       halfDisk(50, 184, 42, 180, 360) +
@@ -268,14 +292,170 @@ figcaption b { color: var(--fg); font-weight: 700; }
       crescent(105, 290, 14, 7, -5, 12) + sector(105, 290, 17, 21, 20, 160, 1) +
       spark(18, 112, 3) + spark(192, 70, 3.6) + spark(80, 126, 2.8, O) + cross(130, 128, 3) + cross(16, 260, 3, O) + chain(56, 40, 82, 40) + chain(128, 40, 154, 40) },
 
-    { num: "XVI", en: "THE TOWER", zh: "高塔", note: "核心象征：中央塔身（左暗右明）、从右上劈下的双线闪电、被震飞到右上方的王冠、塔顶迸出的碎晶、左右两枚坠落的点与碎片", art:
+    { num: "III", en: "THE EMPRESS", zh: "皇后", note: "核心象征：底部一排麦穗麦田、右下刻着金星符号的盾牌、左上弧形星冠（十二颗星）、斜倚的碎晶主体、右上排线半圆林丘", art:
+      frame(30, 40, 150, 110, O, 0.6, 301) + frame(44, 52, 128, 88, R, 0.8, 302) +
+      halfDisk(166, 118, 44, 180, 360, 0) +
+      arc(66, 76, 34, 190, 350, 1.8) + arc(66, 76, 41, 200, 340, 0.5, O, ' stroke-dasharray="2 2.5"') +
+      [196, 209, 222, 235, 248, 261, 274, 287, 300, 313, 326, 339].map(function (d, i) { var p = onC(66, 76, 37, d); return spark(p[0], p[1], i % 3 === 1 ? 3.6 : 2.6, i % 2 ? O : R); }).join("") + reticle(66, 76, 3) +
+      crystal(303, [56, 206], [150, 118], [172, 232], 16, 225, { bounds: [20, 82, 196, 254], cap: 60, split: 500, hang: 0.3 }) +
+      pg([[144, 212], [188, 212], [166, 262]], 0, "none", BG) + T([144, 212], [188, 212], [166, 262], { w: 2, fill: "P", inset: true }) + ci(166, 230, 7, 1.8) + ln(166, 237, 166, 252, 1.8) + ln(160, 246, 172, 246, 1.6) +
+      (function () { var rng = srnd(304), s = ""; for (var x = 14; x < 198; x += 8) s += stalk(x + (rng() - 0.5) * 3, 310, 18 + rng() * 30, rng() < 0.3 ? O : R); return s; })() +
+      ladder(14, 262, 50, 3, 6) + fringe(50, 160, 150, 305, 6, 8, 28) +
+      chain(130, 40, 190, 40) + spark(186, 60, 3.6) + cross(24, 130, 3, O) + spark(30, 180, 3) + ln(10, 310, 200, 310, 1.2) },
+
+    { num: "IV", en: "THE EMPEROR", zh: "皇帝", note: "核心象征：四角公羊头的石座（梯级靠背）、左手宝球、右手安卡权杖、背后排线荒山、一道打破对称的斜线", art:
+      pl([[8, 150], [40, 96], [70, 132], [105, 78], [136, 126], [168, 92], [202, 142]], 1.5) + pl([[12, 156], [40, 104], [70, 140], [105, 88], [136, 134], [168, 100], [200, 150]], 0.5, O) +
+      hpg([[40, 96], [24, 124], [58, 124]], 1) + hpg([[105, 78], [88, 110], [122, 110]], 2) + hpg([[168, 92], [152, 122], [186, 122]], 1) + pg([[40, 96], [24, 124], [58, 124]], 1) + pg([[105, 78], [88, 110], [122, 110]], 1) + pg([[168, 92], [152, 122], [186, 122]], 1) +
+      frame(30, 60, 150, 70, O, 0.6, 403) +
+      frame(56, 120, 98, 190, R, 2, 401) + ladder(62, 128, 86, 6, 5) + ln(66, 160, 66, 300, 0.5, O) + ln(144, 160, 144, 300, 0.5, O) + ln(56, 250, 154, 250, 1.4) + dot(56, 250, 1.5) + dot(154, 250, 1.5) +
+      [[56, 120], [154, 120], [56, 300], [154, 300]].map(function (p) { return ci(p[0], p[1], 5.5, 1.4, R, P) + arc(p[0] - 7, p[1] - 3, 5, 160, 330, 1.5) + arc(p[0] + 7, p[1] - 3, 5, 210, 380, 1.5) + dot(p[0], p[1], 1.4); }).join("") +
+      crystal(402, [70, 300], [140, 300], [105, 176], 12, -90, { bounds: [58, 124, 152, 300], cap: 50, split: 500, tone: "dark" }) +
+      ci(72, 206, 8, 1.8, R, BG) + cross(72, 194, 3.5) + ln(64, 206, 80, 206, 0.6, O) + ln(72, 214, 72, 250, 1.2) +
+      knock([[140, 150], [140, 250]], 1.8) + ci(140, 146, 5, 1.6, R, P) + ln(133, 156, 147, 156, 1.6) +
+      ln(8, 312, 202, 60, 0.8, O) + dotsL(14, 304, 60, 244) +
+      fringe(24, 56, 150, 404, 3, 10, 30) + ladder(160, 200, 34, 4, 7) + chain(20, 40, 70, 40) + spark(180, 48, 3.6) + spark(28, 230, 3) + cross(184, 280, 3, O) + ln(10, 310, 200, 310, 1.2) },
+
+    { num: "V", en: "THE HIEROPHANT", zh: "教皇", note: "核心象征：三层弧形冠冕、右侧举起的两指祝福手势、左侧三横十字杖、脚前左右两簇信徒碎晶、底部交叉的两把钥匙、两侧双柱", art:
+      frame(28, 70, 16, 230, R, 1.5, 501) + ln(36, 78, 36, 292, 0.5, O) + T([36, 52], [28, 70], [44, 70], { w: 1.3, inset: true }) + ladder(46, 80, 16, 4, 6) +
+      frame(166, 70, 16, 230, R, 1.5, 502) + ln(174, 78, 174, 292, 0.5, O) + T([174, 52], [166, 70], [182, 70], { w: 1.3, inset: true }) + ladder(148, 80, 16, 4, 6) +
+      frame(50, 60, 110, 200, O, 0.6, 506) +
+      crystal(503, [70, 250], [140, 250], [105, 70], 14, -90, { bounds: [52, 64, 158, 256], cap: 50, split: 500, hang: 0.3 }) +
+      arc(105, 64, 24, 180, 360, 2.2) + arc(105, 54, 17, 180, 360, 1.5) + arc(105, 46, 10, 180, 360, 1.1) + ln(79, 64, 131, 64, 1.8) + spark(105, 30, 4) + dot(81, 64, 1.5) + dot(129, 64, 1.5) +
+      ci(158, 132, 5.5, 1.5, R, BG) + knock([[154, 128], [154, 102]], 1.8) + knock([[160, 128], [160, 102]], 1.8) + dot(154, 100, 1.4) + dot(160, 100, 1.4) + ln(150, 140, 166, 140, 0.6, O) +
+      knock([[54, 96], [54, 250]], 1.8) + ln(48, 84, 60, 84, 1.4) + ln(46, 92, 62, 92, 1.4) + ln(48, 100, 60, 100, 1.4) + ln(54, 78, 54, 106, 1.4) +
+      crystal(504, [26, 312], [80, 312], [54, 258], 6, -90, { bounds: [12, 248, 96, 312], cap: 30, split: 9999 }) + dot(54, 256, 2.2) +
+      crystal(505, [130, 312], [184, 312], [156, 258], 6, -90, { bounds: [114, 248, 198, 312], cap: 30, split: 9999 }) + ci(156, 256, 2.2, 1, R, BG) +
+      knock([[82, 302], [128, 266]], 2) + knock([[128, 302], [82, 266]], 2) + ci(82, 302, 4.5, 1.5, R, BG) + ci(128, 302, 4.5, 1.5, R, BG) + ln(124, 266, 128, 270, 1.2) + ln(120, 270, 124, 274, 1.2) + ln(86, 266, 82, 270, 1.2) + ln(90, 270, 86, 274, 1.2) +
+      fringe(56, 154, 60, 507, 8, 8, 40) + chain(60, 40, 150, 40) + spark(18, 120, 3) + spark(192, 200, 3.4) + cross(20, 230, 3, O) + ln(10, 310, 200, 310, 1.2) },
+
+    { num: "VI", en: "THE LOVERS", zh: "恋人", note: "核心象征：顶部大日轮与向两侧展开的薄片双翼（天使）、左右相向生长的两团碎晶（两个形体，一暗一明）、各自背后一棵树（左结果、右生焰）、中间一座排线山、两形之间的珠链", art:
+      frame(40, 36, 130, 90, O, 0.6, 604) + frame(52, 28, 106, 80, R, 0.8, 605) +
+      halo(105, 70, 30, 602, { a0: 150, a1: 210, n: 9, max: 44, min: 14, aw: 0.01 }) + halo(105, 70, 30, 603, { a0: -30, a1: 30, n: 9, max: 44, min: 14, aw: 0.01 }) +
+      halo(105, 58, 22, 601, { n: 36, max: 30, aw: 2 }) + ci(105, 58, 22, 2) + ci(105, 58, 14, 0.6, O) + sector(105, 58, 15, 21, 190, 330, 0) + reticle(105, 58, 3) +
+      knock([[44, 136], [44, 304]], 1.6) + [148, 170, 192, 214, 236, 258].map(function (y, i) { var x = 44 + (i % 2 ? 8 : -8); return ln(44, y, x, y - 6, 0.7) + ci(x, y - 8, 2.8, 1, R, P); }).join("") +
+      knock([[166, 136], [166, 304]], 1.6) + [146, 168, 190, 212, 234, 256].map(function (y, i) { var x = 166 + (i % 2 ? 7 : -7); return sliver(x + (i % 2 ? 4 : -4), y - 14, x, y, 2.4, i % 2 ? R : O) + ln(166, y + 2, x, y, 0.7); }).join("") +
+      crystal(606, [40, 304], [100, 304], [72, 190], 14, -20, { bounds: [22, 146, 104, 304], cap: 44, split: 400, hang: 0.3, tone: "dark" }) +
+      crystal(607, [110, 304], [170, 304], [138, 190], 14, 200, { bounds: [106, 146, 188, 304], cap: 44, split: 400, hang: 0.3, tone: "light" }) +
+      T([105, 232], [78, 304], [132, 304], { w: 1.8, wedge: 0, k: 0.5, hk: 1, inset: true }) +
+      chain(74, 184, 136, 184) + bead(74, 184, 0) + bead(136, 184, 0, O) +
+      ladder(14, 150, 24, 4, 6) + ladder(172, 150, 24, 4, 6) + chain(16, 44, 46, 44) + spark(28, 70, 3.6) + spark(184, 72, 3) + cross(190, 240, 3, O) + ln(10, 310, 200, 310, 1.2) },
+
+    { num: "VII", en: "THE CHARIOT", zh: "战车", note: "核心象征：方形战车（粗框加梯级）、顶上布满四角星的星幕与珠帘、车前一暗一明背向而立的两只斯芬克斯碎晶、车首带翼的日盘、背后城墙梯线", art:
+      ladder(12, 90, 60, 4, 5) + ladder(138, 90, 60, 4, 5) + pg([[20, 70], [34, 70], [34, 90], [20, 90]], 1) + pg([[176, 70], [190, 70], [190, 90], [176, 90]], 1) +
+      frame(44, 96, 122, 180, O, 0.6, 707) +
+      frame(58, 104, 94, 46, R, 1.6, 701) + hpg([[58, 104], [152, 104], [152, 112], [58, 112]], 0) + [70, 86, 102, 118, 134].map(function (x, i) { return spark(x, i % 2 ? 136 : 124, 3.6, i % 2 ? O : R); }).join("") + spark(146, 124, 3) + chain(60, 148, 150, 148) +
+      ln(62, 150, 62, 172, 1.4) + ln(148, 150, 148, 172, 1.4) + fringe(66, 144, 150, 703, 8, 6, 20) +
+      ci(58, 254, 12, 1.6) + ci(58, 254, 6, 0.6, O) + ci(152, 254, 12, 1.6) + ci(152, 254, 6, 0.6, O) +
+      frame(60, 172, 90, 78, R, 2, 702) + ladder(64, 178, 82, 3, 5) + ln(66, 200, 66, 244, 0.5, O) + ln(144, 200, 144, 244, 0.5, O) +
+      crystal(704, [78, 250], [132, 250], [105, 160], 10, -90, { bounds: [62, 118, 148, 250], cap: 40, split: 500 }) +
+      ci(105, 250, 5.5, 1.5, R, P) + sliver(82, 245, 100, 250, 2.4) + sliver(128, 245, 110, 250, 2.4) + dot(105, 250, 1.4) +
+      crystal(705, [20, 312], [76, 312], [52, 258], 8, 180, { bounds: [10, 234, 86, 312], cap: 36, split: 500, tone: "dark" }) + dot(30, 268, 1.8) +
+      crystal(706, [134, 312], [190, 312], [158, 258], 8, 0, { bounds: [124, 234, 200, 312], cap: 36, split: 500, tone: "light" }) + ci(180, 268, 1.8, 0.9, R, BG) +
+      chain(20, 44, 70, 44) + spark(180, 46, 3.6) + spark(26, 110, 3) + cross(190, 200, 3, O) + ln(10, 310, 200, 310, 1.2) },
+
+    { num: "VIII", en: "STRENGTH", zh: "力量", note: "核心象征：顶端无限符号、左侧高而明亮的碎晶（女子）与头上的花环、右下深色碎晶兽身与光鬃狮首（半圆排线为合拢的口）、一链从明晶伸向狮口的手", art:
+      halo(105, 44, 15, 805, { a0: 195, a1: 345, n: 12, max: 16, aw: 0.01 }) +
+      path("M84 46 C84 36 100 36 105 46 C110 56 126 56 126 46 C126 36 110 36 105 46 C100 56 84 56 84 46 Z", 2) + path("M90 46 C90 40 101 40 105 46 C109 52 120 52 120 46 C120 40 109 40 105 46 C101 52 90 52 90 46 Z", 0.5, O) + dot(105, 46, 1.5) +
+      frame(30, 96, 100, 120, O, 0.6, 804) + frame(42, 86, 86, 100, R, 0.8, 806) +
+      crystal(801, [52, 300], [98, 300], [76, 116], 12, -90, { bounds: [34, 100, 112, 300], cap: 50, split: 500, tone: "light", hang: 0.2 }) +
+      [190, 212, 234, 256, 278, 300, 322, 344].map(function (d, i) { var p = onC(76, 126, 30, d); return ci(p[0], p[1], 2.6, 0.9, R, i % 2 ? P : BG) + (i % 3 === 1 ? spark(p[0], p[1] - 6, 2.2, O) : ""); }).join("") + arc(76, 126, 30, 190, 350, 0.6, O) +
+      crystal(803, [116, 312], [200, 312], [150, 234], 12, 0, { bounds: [110, 222, 202, 312], cap: 40, split: 500, tone: "dark", hang: 0.2 }) +
+      halo(146, 212, 16, 802, { n: 30, max: 24, min: 8, aw: 0.01 }) + ci(146, 212, 16, 2.2, R, P) + ci(146, 212, 10, 0.6, O) + sector(146, 212, 10, 15, 10, 170, 1) + knock([[132, 214], [160, 214]], 1.6) + ln(134, 218, 158, 218, 0.5, O) + reticle(146, 204, 2.4) +
+      chain(98, 176, 132, 208) + bead(132, 208, 0) + bead(98, 176, 1) +
+      ladder(14, 240, 26, 3, 6) + chain(130, 40, 190, 40) + spark(32, 66, 3.6) + spark(184, 90, 3) + cross(184, 160, 3, O) + ln(10, 310, 200, 310, 1.2) },
+
+    { num: "IX", en: "THE HERMIT", zh: "隐士", note: "核心象征：底部整片浅色雪峰碎晶、峰顶兜帽状深色三角形体、左侧长杖、右上六边提灯内嵌六芒星并放射光芒、上方梯线暗空与垂星", art:
+      ladder(14, 50, 50, 5, 6) + ladder(150, 36, 44, 4, 6) + chain(66, 44, 126, 44) + fringe(16, 70, 60, 901, 5, 12, 50) +
+      frame(120, 96, 70, 70, O, 0.6, 904) +
+      crystal(902, [8, 312], [202, 312], [110, 174], 16, -90, { bounds: [8, 146, 202, 312], cap: 50, split: 500, tone: "light" }) +
+      pg([[110, 172], [94, 252], [126, 252]], 0, "none", BG) + T([110, 172], [94, 252], [126, 252], { w: 1.9, fill: "H", hk: 1, inset: 2.5 }) + ci(110, 168, 4.5, 1.5, R, BG) + dot(110, 168, 1.2) +
+      knock([[72, 110], [72, 290]], 2) + ci(72, 106, 3.6, 1.5, R, P) + dot(72, 300, 1.4) +
+      halo(150, 130, 24, 903, { n: 26, max: 24, min: 6, aw: 0.01 }) +
+      pg([[150, 108], [164, 116], [164, 144], [150, 152], [136, 144], [136, 116]], 1.8, R, P) + pg([[150, 116], [160, 134], [140, 134]], 1.2) + pg([[150, 146], [140, 128], [160, 128]], 1.2) + dot(150, 131, 1.4) + ln(150, 100, 150, 108, 1.4) + ci(150, 97, 2.6, 1.2, R, BG) +
+      chain(120, 190, 144, 152, O) +
+      spark(36, 110, 3.6) + spark(184, 196, 3) + cross(190, 60, 3, O) + cross(24, 160, 3) + ln(10, 310, 200, 310, 1.2) },
+
+    { num: "X", en: "WHEEL OF FORTUNE", zh: "命运之轮", note: "核心象征：中央带八根辐条与放射的大轮、轮顶的斯芬克斯碎晶、左侧沿轮降下的双线蛇、右侧上行的深色碎晶、四角四生物（天使、鹰、狮、牛）", art:
+      frame(46, 48, 118, 124, O, 0.6, 1004) + creature(0, 36, 62, 1011) + creature(1, 174, 62, 1012) + creature(2, 36, 284, 1013) + creature(3, 174, 284, 1014) +
+      halo(105, 160, 58, 1001, { n: 40, max: 16, min: 4, aw: 2 }) +
+      sector(105, 160, 30, 48, 45, 135, 0) + sector(105, 160, 30, 48, 225, 315, 1) +
+      ci(105, 160, 56, 2.2) + ci(105, 160, 48, 0.6, O) + ci(105, 160, 30, 1.4) + ci(105, 160, 12, 1, R, P) +
+      [0, 45, 90, 135, 180, 225, 270, 315].map(function (d, i) { var a = onC(105, 160, 12, d), b = onC(105, 160, 56, d); return ln(a[0], a[1], b[0], b[1], i % 2 ? 0.6 : 1.3, i % 2 ? O : R); }).join("") +
+      [0, 90, 180, 270].map(function (d) { var p = onC(105, 160, 40, d); return spark(p[0], p[1], 3.2); }).join("") + reticle(105, 160, 4) +
+      crystal(1002, [86, 104], [124, 104], [105, 70], 6, -90, { bounds: [66, 48, 144, 106], cap: 30, split: 9999 }) + ln(84, 104, 126, 104, 2) + dot(105, 70, 2) +
+      knock([[40, 100], [52, 124], [38, 150], [54, 178], [40, 206], [50, 230]], 1.6) + pl([[46, 100], [58, 124], [44, 150], [60, 178], [46, 206]], 0.5, O) + ci(50, 234, 3.2, 1.3, R, P) + dot(50, 234, 1) +
+      crystal(1003, [160, 240], [184, 240], [172, 194], 6, -90, { bounds: [150, 178, 196, 246], cap: 28, split: 9999, tone: "dark" }) +
+      ladder(14, 150, 20, 4, 6) + chain(70, 300, 140, 300) + spark(64, 44, 3) + cross(146, 46, 3, O) + spark(150, 262, 3) + cross(60, 262, 3, O) },
+
+    { num: "XI", en: "JUSTICE", zh: "正义", note: "核心象征：严格左右镜像——中央竖直的剑片、下方横梁天平与两只排线半圆秤盘、两侧双柱与珠帘、顶上小冠", art:
+      mirror(frame(28, 70, 14, 230, R, 1.5, 1101) + ln(35, 78, 35, 292, 0.5, O) + T([35, 52], [28, 70], [42, 70], { w: 1.3, inset: true }) + ladder(44, 80, 16, 4, 6) +
+        crystal(1102, [58, 312], [105, 312], [82, 196], 9, -90, { bounds: [46, 150, 105, 312], cap: 44, split: 500, hang: 0.3 }) +
+        fringe(50, 104, 74, 1103, 5, 8, 40) + spark(20, 120, 3) + cross(56, 140, 3, O) + chain(16, 40, 56, 40) + ladder(14, 250, 26, 3, 6) + frame(50, 90, 55, 150, O, 0.6, 1104)) +
+      ln(42, 74, 168, 74, 1.6) + dot(42, 74, 1.6) + dot(168, 74, 1.6) +
+      arc(105, 50, 16, 180, 360, 1.8) + spark(105, 30, 4) + spark(92, 38, 3) + spark(118, 38, 3) + ln(89, 50, 121, 50, 1.2) +
+      pg([[105, 60], [100, 230], [110, 230]], 0, "none", BG) + pg([[105, 60], [100, 230], [110, 230]], 1.8, R, P) + ln(105, 72, 105, 226, 0.5, O) + knock([[86, 232], [124, 232]], 2.2) + ci(105, 244, 4.5, 1.5, R, P) + dot(105, 244, 1.2) +
+      knock([[50, 256], [160, 256]], 1.8) + dot(50, 256, 1.6) + dot(160, 256, 1.6) + reticle(105, 256, 3) +
+      ln(58, 256, 58, 284, 0.8) + ln(152, 256, 152, 284, 0.8) + halfDisk(58, 284, 14, 0, 180, 2) + halfDisk(152, 284, 14, 0, 180, 2) +
+      ln(10, 310, 200, 310, 1.2) },
+
+    { num: "XII", en: "THE HANGED MAN", zh: "倒吊人", note: "核心象征：两根带叶的立柱与顶上横梁组成的 T 形树、从梁心向下生长的倒悬碎晶形体、形体内的交叉、底端的放射光环、梁下一排绳珠", art:
+      knock([[40, 60], [40, 312]], 2.2) + knock([[170, 60], [170, 312]], 2.2) + knock([[24, 70], [186, 70]], 2.6) + ln(30, 75, 180, 75, 0.5, O) + dot(24, 70, 1.6) + dot(186, 70, 1.6) +
+      [96, 128, 160, 192, 224, 256, 288].map(function (y, i) { return sliver(26, y - 8, 40, y, 2.4, i % 2 ? R : O) + sliver(184, y + 8, 170, y + 16, 2.4, i % 2 ? O : R); }).join("") +
+      frame(60, 90, 90, 140, O, 0.6, 1204) + fringe(50, 160, 75, 1201, 10, 6, 40) +
+      knock([[105, 75], [105, 100]], 1.8) + dot(105, 76, 1.5) +
+      crystal(1202, [95, 100], [115, 100], [105, 150], 12, 90, { bounds: [58, 96, 152, 236], cap: 40, split: 500, hang: 0.2 }) +
+      cross(105, 114, 6) +
+      halo(105, 252, 16, 1203, { n: 24, max: 14, min: 5, aw: 1.6 }) + ci(105, 252, 16, 2, R, P) + ci(105, 252, 10, 0.6, O) + reticle(105, 252, 3) +
+      ladder(14, 290, 20, 3, 6) + ladder(176, 290, 20, 3, 6) + chain(50, 300, 160, 300) + spark(20, 40, 3.6) + spark(190, 44, 3) + cross(58, 270, 3, O) + cross(152, 270, 3, O) },
+
+    { num: "XIII", en: "DEATH", zh: "死神", note: "核心象征：顶部双塔之间从地平线升起的半轮日出、左侧旗杆上的排线黑旗与旗中白玫瑰、横贯下半的大片浅色碎晶（白马）与其上的深色碎晶（骑者）、底部河水弧", art:
+      frame(60, 40, 90, 100, O, 0.6, 1304) +
+      halo(105, 132, 24, 1303, { a0: 180, a1: 360, n: 20, max: 26, aw: 2 }) + sector(105, 132, 0, 24, 180, 360, 0) + arc(105, 132, 24, 180, 360, 2) + arc(105, 132, 16, 180, 360, 0.6, O) +
+      hpg([[40, 50], [54, 50], [54, 132], [40, 132]], 1) + frame(40, 50, 14, 82, R, 1.5, 1301) + T([47, 34], [40, 50], [54, 50], { w: 1.2, fill: "O" }) +
+      frame(156, 50, 14, 82, R, 1.5, 1302) + ln(163, 58, 163, 126, 0.5, O) + T([163, 34], [156, 50], [170, 50], { w: 1.2, inset: true }) +
+      knock([[8, 132], [202, 132]], 1.6) + chain(60, 136, 150, 136) +
+      crystal(1305, [30, 304], [150, 304], [164, 158], 18, -150, { bounds: [8, 140, 184, 306], cap: 60, split: 500, hang: 0.3, tone: "light" }) +
+      crystal(1306, [112, 196], [152, 196], [134, 140], 8, -90, { bounds: [100, 112, 178, 200], cap: 36, split: 500, tone: "dark" }) +
+      knock([[60, 150], [60, 290]], 2) + dot(60, 148, 2) + pg([[62, 152], [122, 160], [116, 216], [62, 208]], 0, "none", BG) + hpg([[62, 152], [122, 160], [116, 216], [62, 208]], 1) + pg([[62, 152], [122, 160], [116, 216], [62, 208]], 1.8) +
+      ci(90, 184, 9, 1.6, R, BG) + ci(90, 184, 5, 0.6, O) + spark(90, 184, 3) +
+      path("M110 312 A48 16 0 0 1 206 312", 1.2) + path("M126 312 A32 10 0 0 1 190 312", 0.6, O) +
+      ladder(14, 60, 22, 4, 6) + ladder(176, 90, 20, 4, 6) + spark(24, 110, 3.6) + spark(186, 150, 3) + cross(22, 290, 3, O) + ln(10, 310, 200, 310, 1.2) },
+
+    { num: "XIV", en: "TEMPERANCE", zh: "节制", note: "核心象征：两只杯之间斜越的珠流、中央浅色碎晶形体与两侧薄片翼、额上日点与胸前三角、一足落入左下水池一足踏在右下陆晶、通向右上带光冠山峰的点线小路", art:
+      T([176, 46], [150, 110], [202, 110], { w: 1.6, wedge: 0, k: 0.45, hk: 2, inset: true }) + halo(176, 46, 4, 1401, { a0: 200, a1: 340, n: 10, max: 14, min: 5, aw: 0.01 }) + spark(176, 34, 3) +
+      dotsP("M62 296 C84 250 118 196 150 112") + bead(150, 110, 1) +
+      frame(40, 90, 130, 120, O, 0.6, 1402) +
+      halo(105, 150, 30, 1404, { a0: 150, a1: 200, n: 8, max: 34, min: 12, aw: 0.01 }) + halo(105, 150, 30, 1405, { a0: -20, a1: 30, n: 8, max: 34, min: 12, aw: 0.01 }) +
+      crystal(1403, [80, 250], [130, 250], [105, 108], 12, -90, { bounds: [66, 100, 144, 252], cap: 40, split: 500, tone: "light" }) +
+      reticle(105, 120, 3.2) + pg([[105, 168], [98, 182], [112, 182]], 1.3, R, P) +
+      cup(64, 160, 10) + cup(146, 196, 10) + dotsP("M66 150 C100 150 120 160 146 186") + dotsP("M70 146 C104 144 124 156 148 182", O) +
+      ln(90, 250, 80, 290, 1.2) + bead(80, 292, 0) + ln(120, 250, 132, 284, 1.2) + T([126, 284], [138, 284], [132, 296], { w: 1, fill: "O" }) +
+      path("M8 312 A52 28 0 0 1 112 312 Z", 1.4, R, P) + path("M22 312 A38 18 0 0 1 98 312", 0.6, O) + path("M38 312 A22 10 0 0 1 82 312", 1) +
+      crystal(1406, [112, 312], [202, 312], [160, 268], 8, -90, { bounds: [108, 236, 202, 312], cap: 36, split: 500 }) +
+      ladder(14, 200, 24, 4, 6) + chain(20, 44, 80, 44) + spark(30, 70, 3.6) + spark(186, 150, 3) + cross(24, 120, 3, O) + ln(10, 310, 200, 310, 1.2) },
+
+    { num: "XV", en: "THE DEVIL", zh: "恶魔", note: "核心象征：顶部尖朝下的倒五芒星与两侧上扬的双角、中央深色碎晶与大片薄片蝠翼、右手火炬、下方排线台座与顶环、从环上松垮垂下的两条链和两端的小碎晶形体", art:
+      frame(50, 40, 110, 70, O, 0.6, 1507) +
+      ci(105, 74, 30, 0.6, O) + star5(105, 74, 28, 90, 2.2) + star5(105, 74, 16, 90, 0.5, O) + dot(105, 74, 1.5) +
+      arc(64, 92, 28, 180, 290, 2.2) + arc(146, 92, 28, 250, 360, 2.2) + dot(36, 92, 1.8) + dot(174, 92, 1.8) +
+      halo(105, 170, 30, 1501, { a0: 190, a1: 260, n: 10, max: 46, min: 16, aw: 0.01 }) + halo(105, 170, 30, 1502, { a0: 280, a1: 350, n: 10, max: 46, min: 16, aw: 0.01 }) +
+      crystal(1503, [80, 240], [130, 240], [105, 110], 12, -90, { bounds: [60, 100, 150, 242], cap: 44, split: 500, tone: "dark", hang: 0.3 }) +
+      knock([[152, 200], [152, 160]], 1.6) + halo(152, 154, 3, 1504, { a0: 200, a1: 340, n: 8, max: 10, min: 4, aw: 0.01 }) + sliver(152, 136, 152, 154, 3, R) +
+      hpg([[70, 240], [140, 240], [140, 312], [70, 312]], 1) + frame(70, 240, 70, 72, R, 2, 1505) + ladder(74, 250, 62, 4, 8) + ci(105, 240, 5.5, 1.8, R, BG) +
+      dotsP("M100 242 C80 266 56 258 44 278") + dotsP("M110 242 C130 266 154 258 166 278") +
+      crystal(1506, [26, 312], [64, 312], [44, 278], 6, -90, { bounds: [12, 262, 72, 312], cap: 26, split: 9999 }) + ci(44, 276, 3, 1.3, R, BG) +
+      crystal(1508, [146, 312], [184, 312], [166, 278], 6, -90, { bounds: [138, 262, 198, 312], cap: 26, split: 9999, tone: "dark" }) + dot(166, 276, 3) +
+      ladder(14, 150, 24, 4, 6) + ladder(172, 230, 24, 3, 6) + chain(16, 40, 46, 40) + spark(186, 50, 3.4) + cross(24, 110, 3, O) + cross(188, 130, 3) },
+
+    { num: "XVI", en: "THE TOWER", zh: "高塔", note: "核心象征：中央塔身（左暗右明）、从右上劈下的双线闪电、被炸向左上方的王冠、整团朝左上喷出的碎晶与速度线、左右两枚坠落的点与碎片", art:
       frame(66, 104, 78, 120, O, 0.6, 131) + dash(105, 30, 105, 310) +
       hpg([[86, 152], [103, 152], [103, 312], [86, 312]], 1) + pg([[86, 152], [124, 152], [124, 312], [86, 312]], 1.9) + ln(120, 160, 120, 304, 0.5, O) + ln(90, 160, 90, 304, 0.5, O) +
       ladder(86, 190, 38, 4, 24) + pl([[106, 154], [112, 190], [100, 230], [110, 270], [104, 312]], 0.7, O, ' stroke-dasharray="2 2"') +
-      crystal(132, [104, 152], [124, 152], [116, 124], 12, -70, { bounds: [56, 30, 190, 176], cap: 50, split: 500 }) +
-      crystal(133, [86, 152], [104, 152], [82, 130], 8, 200, { bounds: [14, 60, 110, 180], cap: 46, split: 500 }) +
-      halo(114, 150, 10, 134, { a0: 180, a1: 360, n: 16, max: 18, aw: 0.01 }) +
-      '<g transform="translate(40 -40) rotate(28 105 140)">' + pg([[90, 152], [120, 152], [120, 134], [112, 142], [105, 126], [98, 142], [90, 134]], 5, BG, BG) + hpg([[90, 152], [120, 152], [120, 134], [112, 142], [105, 126], [98, 142], [90, 134]], 0) + pg([[90, 152], [120, 152], [120, 134], [112, 142], [105, 126], [98, 142], [90, 134]], 1.8) + ln(93, 148, 117, 148, 0.5, O) + dot(105, 126, 1.6) + dot(90, 134, 1.6) + dot(120, 134, 1.6) + '</g>' +
+      [[0, 96], [12, 72], [-10, 64], [22, 50], [6, 44], [-20, 40]].map(function (p) { var a = -135 * D2R, c = Math.cos(a), s = Math.sin(a), ox = 112 - p[0] * s, oy = 150 + p[0] * c; return tl(ox + c * 14, oy + s * 14, ox + c * p[1], oy + s * p[1], 0.7, O); }).join("") +
+      crystal(132, [104, 152], [124, 152], [108, 120], 16, -135, { bounds: [14, 46, 160, 176], cap: 52, split: 500, hmax: 1.7 }) +
+      crystal(133, [110, 152], [124, 152], [134, 136], 5, -30, { bounds: [108, 100, 190, 160], cap: 30, split: 9999 }) +
+      halo(114, 150, 10, 134, { a0: 190, a1: 290, n: 12, max: 26, min: 8, aw: 0.01 }) +
+      '<g transform="translate(-46 -50) rotate(-32 105 140)">' + pg([[90, 152], [120, 152], [120, 134], [112, 142], [105, 126], [98, 142], [90, 134]], 5, BG, BG) + hpg([[90, 152], [120, 152], [120, 134], [112, 142], [105, 126], [98, 142], [90, 134]], 0) + pg([[90, 152], [120, 152], [120, 134], [112, 142], [105, 126], [98, 142], [90, 134]], 1.8) + ln(93, 148, 117, 148, 0.5, O) + dot(105, 126, 1.6) + dot(90, 134, 1.6) + dot(120, 134, 1.6) + '</g>' +
       knock([[198, 18], [150, 84], [170, 92], [116, 152]], 2.6) + pl([[192, 28], [154, 80], [174, 88], [128, 140]], 0.6, O) + spark(118, 150, 5) +
       ci(50, 206, 3.8, 1.3, R, BG) + dot(50, 206, 1.3) + dotsP("M54 200 C62 182 72 172 82 164") + T([50, 214], [42, 236], [60, 240], { w: 1.2, wedge: 0, k: 0.5, hk: 1 }) + drop(50, 240, 22, 0) +
       ci(166, 220, 3.8, 1.3, R, BG) + dot(166, 220, 1.3) + dotsP("M162 214 C154 198 146 184 136 174") + T([166, 228], [160, 252], [176, 248], { w: 1.2, fill: "P", inset: 2 }) + drop(168, 252, 30, 2, O) +
@@ -323,7 +503,28 @@ figcaption b { color: var(--fg); font-weight: 700; }
       knock([[44, 236], [44, 312]], 2) + ci(44, 234, 3.2, 1.2, R, BG) + dot(44, 234, 1) +
       ln(40, 262, 190, 262, 0.5, O, ' stroke-dasharray="2 2.5"') +
       fringe(40, 170, 180, 165, 5, 6, 26) +
-      spark(24, 50, 3.6) + spark(188, 196, 3.2) + cross(22, 196, 3, O) + chain(14, 300, 40, 300) + ln(10, 310, 200, 310, 1.2) }
+      spark(24, 50, 3.6) + spark(188, 196, 3.2) + cross(22, 196, 3, O) + chain(14, 300, 40, 300) + ln(10, 310, 200, 310, 1.2) },
+
+    { num: "XX", en: "JUDGEMENT", zh: "审判", note: "核心象征：左上放射日轮（天使）与斜贯的长号、号口的声波放射、号下悬挂的十字旗、底部三具敞口棺匣与从中向上生长的浅色碎晶、远处排线山脊", art:
+      frame(30, 46, 150, 100, O, 0.6, 2010) + ladder(150, 50, 40, 4, 6) + fringe(40, 170, 146, 2012, 8, 8, 40) +
+      halo(44, 80, 14, 2001, { a0: 20, a1: 380, n: 22, max: 20, min: 6, aw: 1.8 }) + ci(44, 80, 14, 2) + ci(44, 80, 8, 0.6, O) + reticle(44, 80, 3) +
+      halo(44, 80, 20, 2011, { a0: 100, a1: 170, n: 6, max: 30, min: 12, aw: 0.01 }) +
+      pg([[56, 84], [142, 124], [138, 136], [54, 92]], 0, "none", BG) + pg([[56, 84], [142, 124], [138, 136], [54, 92]], 1.8, R, P) + ln(60, 89, 136, 127, 0.5, O) +
+      sector(144, 130, 6, 18, 290, 430, 2) + arc(144, 130, 18, 290, 430, 1.8) +
+      halo(144, 130, 18, 2002, { a0: -50, a1: 50, n: 8, max: 26, min: 10, aw: 0.01 }) +
+      pg([[84, 104], [108, 116], [108, 142], [84, 130]], 1.6, R, BG) + ln(96, 110, 96, 136, 1.6) + ln(88, 120, 104, 126, 1.6) +
+      pl([[8, 238], [40, 202], [70, 228], [105, 192], [140, 224], [170, 198], [202, 232]], 1.2) + hpg([[40, 202], [26, 222], [54, 222]], 2) + hpg([[170, 198], [156, 220], [184, 220]], 2) +
+      [26, 83, 140].map(function (x, i) { return pl([[x, 266], [x, 312], [x + 44, 312], [x + 44, 266]], 1.8) + hpg([[x, 266], [x + 8, 266], [x + 8, 312], [x, 312]], 1) + ln(x + 12, 300, x + 40, 300, 0.5, O) + crystal(2003 + i, [x + 10, 270], [x + 34, 270], [x + 22, 228], 6, -90, { bounds: [x - 4, 196, x + 48, 272], cap: 30, split: 9999, tone: "light" }) + chain(x + 22, 226, x + 22, 196) + spark(x + 22, 190, 3, i % 2 ? O : R); }).join("") +
+      chain(120, 40, 170, 40) + spark(186, 150, 3.4) + cross(22, 160, 3, O) + spark(30, 100, 3) },
+
+    { num: "XXI", en: "THE WORLD", zh: "世界", note: "核心象征：大椭圆花环（一圈切向薄片叶）与上下两结丝带、环内向上生长的浅色碎晶舞者与交叉的两根杖、四角四生物（天使、鹰、狮、牛）", art:
+      frame(44, 70, 122, 180, O, 0.6, 2102) + creature(0, 36, 62, 2111) + creature(1, 174, 62, 2112) + creature(2, 36, 284, 2113) + creature(3, 174, 284, 2114) +
+      el(105, 160, 62, 96, 2.2) + el(105, 160, 55, 88, 0.6, O) + wreath(105, 160, 62, 96, 30) +
+      sliver(90, 50, 105, 64, 3.2, R) + sliver(120, 50, 105, 64, 3.2, R) + ci(105, 64, 3.4, 1.3, R, P) + sliver(90, 270, 105, 256, 3.2, R) + sliver(120, 270, 105, 256, 3.2, R) + ci(105, 256, 3.4, 1.3, R, P) +
+      crystal(2101, [86, 236], [124, 236], [105, 128], 12, -90, { bounds: [60, 90, 150, 240], cap: 40, split: 500, tone: "light", hang: 0.2 }) +
+      tl(76, 148, 94, 118, 1.5) + dot(76, 148, 2) + tl(134, 148, 116, 118, 1.5) + dot(134, 148, 2) +
+      dotsP("M78 160 C100 196 112 214 132 240", O) + spark(105, 108, 3.4) +
+      ladder(14, 150, 20, 4, 6) + ladder(176, 150, 20, 4, 6) + chain(60, 36, 150, 36) + chain(60, 300, 150, 300) + spark(60, 60, 2.6, O) + cross(150, 62, 3, O) }
   ];
 
   var BACK = (function () {
@@ -343,11 +544,22 @@ figcaption b { color: var(--fg); font-weight: 700; }
     return s;
   })();
 
-  var html = CARDS.map(function (c) {
-    return '<figure><button class="cardbtn" type="button" aria-pressed="false" aria-label="' + c.zh + '，点击查看逆位">' + card(c.num, c.en, c.zh, c.art) + '</button>' +
-      '<figcaption><b>' + c.zh + '</b> · ' + c.note + '</figcaption></figure>';
+  var byNum = {};
+  ARCANA.forEach(function (c) { byNum[c.num] = c; });
+  // 按编号生成一张牌面 SVG；每次调用都用新的 pattern / clip id，同一页多张互不干扰
+  function face(num) { var c = byNum[num]; return c ? card(c.num, c.en, c.zh, c.art) : ""; }
+  return { card: card, face: face, cards: ARCANA, byNum: byNum, back: BACK };
+})();
+// ART-END
+</script>
+<script>
+(function () {
+  "use strict";
+  var html = MoXingArt.cards.map(function (c) {
+    return '<figure><button class="cardbtn" type="button" aria-pressed="false" aria-label="' + c.zh + '，点击查看逆位">' + MoXingArt.card(c.num, c.en, c.zh, c.art) + '</button>' +
+      '<figcaption><b>' + c.num + ' ' + c.zh + '</b> · ' + c.note + '</figcaption></figure>';
   }).join("") +
-    '<figure><button class="cardbtn" type="button" aria-pressed="false" aria-label="牌背，点击旋转">' + BACK + '</button><figcaption><b>牌背</b> · 上半碎晶、放射、方框与垂珠旋转复制到下半，严格中心对称</figcaption></figure>';
+    '<figure><button class="cardbtn" type="button" aria-pressed="false" aria-label="牌背，点击旋转">' + MoXingArt.back + '</button><figcaption><b>牌背</b> · 上半碎晶、放射、方框与垂珠旋转复制到下半，严格中心对称</figcaption></figure>';
   document.getElementById("grid").innerHTML = html;
   document.querySelectorAll(".cardbtn").forEach(function (b) {
     b.addEventListener("click", function () { b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") === "true" ? "false" : "true"); });
