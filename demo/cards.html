@@ -4,7 +4,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Noto+Serif+SC:wght@500;700&family=Noto+Sans+SC:wght@400;700&display=swap">
 <style>
-/* 布局：说明在上，样张四列网格在下；牌面固定为米白纸加单色朱红线，页面随主题切换 */
+/* 布局：说明在上，样张网格在下；牌面固定为米白纸加朱红橙双色线，页面随主题切换 */
 :root {
   --bg: #ece7de; --fg: #241c18; --muted: #6a5f57; --line: #d3c9bc; --red: #c23b2a;
   --font-num: "Cormorant Garamond", Georgia, serif;
@@ -41,16 +41,16 @@ figcaption b { color: var(--fg); font-weight: 700; }
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Mo Xing Tarot · Major Arcana · Draft 05</span>
-    <h1>墨星牌 · 线条几何样张</h1>
-    <p>第五稿参照“神圣几何”手绘：深朱红加橙色双色细线，主体切成碎面、交替排线，叠加错位边框、长短放射、下垂珠链和四角星，构图打破对称。每张牌的核心象征都保留。点击任意一张可以看逆位效果。</p>
+    <span class="eyebrow">Mo Xing Tarot · Major Arcana · Draft 06</span>
+    <h1>墨星牌 · 神圣几何样张</h1>
+    <p>第六稿贴近“神圣几何”手绘的做法：不再散布独立尖刺，而是让三角碎面一片接一片共用边生长成一整团沿对角线坠落的晶体。每片碎面带内缩的平行副线、排线角楔或浅橙底，外面叠着越过角点的错位方框、长短不齐的放射、断开的粗弧、垂下的珠链和散落的四角星、小十字、准星。每张牌的核心象征都从碎晶中长出来，不画人。点击任意一张可以看逆位效果。</p>
   </header>
 
   <section class="specs" aria-label="设计规范">
-    <div class="spec"><h2>Line</h2><p>深朱红主线、橙色副线，主体 1.6、结构 0.6。碎面用浅橙底加细排线，红橙两个方向交替。</p></div>
-    <div class="spec"><h2>Geometry</h2><p>大形切成三角碎面，周围是越过角点的错位方框、长短不一的放射线和尖刺，配点线、珠链、十字与四角星。</p></div>
-    <div class="spec"><h2>Frame</h2><p>单细线边框，左上角罗马数字，底部宋体牌名配英文，22 张位置固定。</p></div>
-    <div class="spec"><h2>Back</h2><p>牌背是神圣几何图案，严格中心对称，旋转 180° 不变，不会暴露正逆位。</p></div>
+    <div class="spec"><h2>Line</h2><p>深朱红主线 1.2–2.0，橙色副线 0.5，三档明显拉开。排线三种方向（橙 45°、红 −40°、橙水平），只填角楔和局部面，不整片涂满。</p></div>
+    <div class="spec"><h2>Geometry</h2><p>碎晶由种子随机数共边生长，方向有偏置，整团朝一个方向流动；外加错位方框、断弧放射、半圆排线盘、梯级横线、珠链和悬垂圆珠，构图故意失衡，形体冲出框线。</p></div>
+    <div class="spec"><h2>Frame</h2><p>单细线边框，左上角罗马数字，底部宋体牌名配英文。画面裁到标题线以上，22 张位置固定。</p></div>
+    <div class="spec"><h2>Back</h2><p>牌背是同一套碎晶与放射，上半部分旋转 180° 复制到下半，严格中心对称，不会暴露正逆位。</p></div>
   </section>
 
   <section class="grid" id="grid" aria-label="样张"></section>
@@ -65,6 +65,7 @@ figcaption b { color: var(--fg); font-weight: 700; }
   var BG = "#f7f1ea", R = "#c8321f", O = "#e9762f", P = "#f8d6bb";
   var uid = 0, D2R = Math.PI / 180;
   function f(n) { return (+n).toFixed(1); }
+  // 固定种子随机数，保证每次渲染一致
   function rnd(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
   function pts(a) { return a.map(function (p) { return f(p[0]) + "," + f(p[1]); }).join(" "); }
   function ln(x1, y1, x2, y2, w, c, ex) { return '<line x1="' + f(x1) + '" y1="' + f(y1) + '" x2="' + f(x2) + '" y2="' + f(y2) + '" stroke="' + (c || R) + '" stroke-width="' + (w || 0.8) + '"' + (ex || "") + '/>'; }
@@ -72,86 +73,150 @@ figcaption b { color: var(--fg); font-weight: 700; }
   function pg(a, w, c, fill, ex) { return '<polygon points="' + pts(a) + '" stroke="' + (c || R) + '" stroke-width="' + (w == null ? 0.8 : w) + '" fill="' + (fill || "none") + '"' + (ex || "") + '/>'; }
   function pl(a, w, c, ex) { return '<polyline points="' + pts(a) + '" stroke="' + (c || R) + '" stroke-width="' + (w || 0.8) + '"' + (ex || "") + '/>'; }
   function path(d, w, c, fill, ex) { return '<path d="' + d + '" stroke="' + (c || R) + '" stroke-width="' + (w || 0.8) + '" fill="' + (fill || "none") + '"' + (ex || "") + '/>'; }
-  // 浅橙底加排线的面
-  function hpg(a, red) { return pg(a, 0, "none", P) + pg(a, 0, "none", red ? "HATCHR" : "HATCH"); }
-  function dots(x1, y1, x2, y2, c) { return ln(x1, y1, x2, y2, 1.3, c || R, ' stroke-dasharray="0.1 3.4"'); }
+  // 浅橙底加排线：k 为 0 橙 45°、1 红 -40°、2 橙水平
+  function hpg(a, k) { return pg(a, 0, "none", P) + pg(a, 0, "none", k === 1 ? "HATCHR" : k === 2 ? "HATCHH" : "HATCH"); }
+  function dotsL(x1, y1, x2, y2, c) { return ln(x1, y1, x2, y2, 1.3, c || R, ' stroke-dasharray="0.1 3.2"'); }
+  function dotsP(d, c) { return path(d, 1.3, c || R, "none", ' stroke-dasharray="0.1 3.2"'); }
   function dash(x1, y1, x2, y2, c) { return ln(x1, y1, x2, y2, 0.5, c || O, ' stroke-dasharray="2 2.5"'); }
-
-  // 碎片：a 为尖端，b 为底边中点，hw 为半宽；内侧一条平行副线，可选半边排线
-  function shard(ax, ay, bx, by, hw, o) {
-    o = o || {};
-    var dx = bx - ax, dy = by - ay, len = Math.hypot(dx, dy) || 1, nx = -dy / len, ny = dx / len;
-    var A = [ax, ay], p1 = [bx + nx * hw, by + ny * hw], p2 = [bx - nx * hw, by - ny * hw], M = [bx, by], s = "";
-    if (o.fill) s += pg([A, p1, p2], 0, "none", o.fill);
-    if (o.h) s += hpg(o.h > 0 ? [A, p1, M] : [A, p2, M], o.hr);
-    s += pg([A, p1, p2], o.w || 1, o.c || R);
-    if (o.inner !== false) {
-      var G = [(ax + p1[0] + p2[0]) / 3, (ay + p1[1] + p2[1]) / 3], k = 0.38, side = o.h < 0 ? p1 : p2;
-      s += ln(ax + (G[0] - ax) * k, ay + (G[1] - ay) * k, side[0] + (G[0] - side[0]) * k, side[1] + (G[1] - side[1]) * k, 0.5, o.c === O ? R : O);
-    }
-    return s;
+  function dot(x, y, r, c) { return ci(x, y, r || 1, 0, c || R, c || R); }
+  // 端点带圆点的线
+  function tl(x1, y1, x2, y2, w, c) { return ln(x1, y1, x2, y2, w, c) + dot(x2, y2, 1, c); }
+  function lerp(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]; }
+  function area2(a) { var s = 0; for (var i = 0; i < a.length; i++) { var p = a[i], q = a[(i + 1) % a.length]; s += p[0] * q[1] - q[0] * p[1]; } return s; }
+  // 凸多边形向内平移 d 得到的内缩多边形，失败时返回 null
+  function inset(poly, d) {
+    var n = poly.length, A = area2(poly), i; if (Math.abs(A) < 2) return null;
+    var sg = A > 0 ? 1 : -1, L = [];
+    for (i = 0; i < n; i++) { var p = poly[i], q = poly[(i + 1) % n], dx = q[0] - p[0], dy = q[1] - p[1], len = Math.hypot(dx, dy) || 1; L.push([p[0] - dy / len * sg * d, p[1] + dx / len * sg * d, dx, dy]); }
+    var out = [];
+    for (i = 0; i < n; i++) { var a = L[(i - 1 + n) % n], b = L[i], cr = a[2] * b[3] - a[3] * b[2]; if (Math.abs(cr) < 1e-6) return null; var t = ((b[0] - a[0]) * b[3] - (b[1] - a[1]) * b[2]) / cr; out.push([a[0] + a[2] * t, a[1] + a[3] * t]); }
+    return area2(out) * sg > 0 ? out : null;
   }
-  // 一簇碎片：在 (cx,cy) 半径 rad 内取底点，朝 ang±spread/2 方向伸出；ang 为 null 时沿径向向外
-  function cluster(seed, cx, cy, rad, n, ang, spread, lmin, lmax, hwmax) {
+  // 三角碎面：外线、内缩副线、角楔排线、浅橙/橙/排线底、某条边的点线、某个顶点的圆点；返回 {f: 填色层, s: 线条层}
+  function tri(A, B, C, o) {
+    o = o || {}; var T = [A, B, C], fl = "", st = "", A2 = Math.abs(area2(T)), per = Math.hypot(B[0] - A[0], B[1] - A[1]) + Math.hypot(C[0] - B[0], C[1] - B[1]) + Math.hypot(A[0] - C[0], A[1] - C[1]);
+    if (o.fill === "P") fl += pg(T, 0, "none", P); else if (o.fill === "O") fl += pg(T, 0, "none", O); else if (o.fill === "H") fl += hpg(T, o.hk);
+    if (o.wedge != null) { var V = T[o.wedge], U = lerp(V, T[(o.wedge + 1) % 3], o.k || 0.42), W = lerp(V, T[(o.wedge + 2) % 3], o.k || 0.42); fl += hpg([V, U, W], o.hk); st += ln(U[0], U[1], W[0], W[1], 0.5, O); }
+    st += pg(T, o.w || 1.2, o.c || R);
+    if (o.inset) { var d = o.inset === true ? 2.8 : o.inset; if (d < A2 / per * 0.9) { var q = inset(T, d); if (q) st += pg(q, 0.5, o.c === O ? R : O); } }
+    if (o.dots != null) { var p1 = T[o.dots], p2 = T[(o.dots + 1) % 3]; st += dotsL(p1[0], p1[1], p2[0], p2[1]); }
+    if (o.vdot != null) st += dot(T[o.vdot][0], T[o.vdot][1], 1.2);
+    return { f: fl, s: st };
+  }
+  function T(A, B, C, o) { var t = tri(A, B, C, o); return t.f + t.s; }
+  // 悬垂圆珠：0 空心带芯、1 实心、2 橙空心带横杠、3 小水滴
+  function bead(x, y, k, c) { c = c || R; k = (k || 0) % 4; return k === 0 ? ci(x, y, 2.6, 0.9, c, BG) + dot(x, y, 0.9, c) : k === 1 ? dot(x, y, 1.8, c) : k === 2 ? ci(x, y, 2.8, 0.8, O, P) + ln(x - 2.6, y + 5, x + 2.6, y + 5, 0.6, c) : pg([[x - 2.4, y - 1.5], [x + 2.4, y - 1.5], [x, y + 3.6]], 0.8, c, P); }
+  function drop(x, y, len, k, c) { var r = (k || 0) % 4 === 1 ? 1.8 : 2.6; return ln(x, y, x, y + len - r, 0.7, c || R) + bead(x, y + len, k, c); }
+  // 一排长短不一的垂线，挂在 y 这条边下面
+  function fringe(x1, x2, y, seed, n, lmin, lmax) {
     var rng = rnd(seed), s = "";
-    for (var i = 0; i < n; i++) {
-      var t = rng() * Math.PI * 2, d = rad * Math.sqrt(rng()), bx = cx + Math.cos(t) * d, by = cy + Math.sin(t) * d;
-      var a = ang == null ? t + (rng() - 0.5) * spread * D2R : (ang + (rng() - 0.5) * spread) * D2R, l = lmin + (lmax - lmin) * rng();
-      var hr = rng(), hh = rng() < 0.55 ? (rng() < 0.5 ? 1 : -1) : 0;
-      s += shard(bx + Math.cos(a) * l, by + Math.sin(a) * l, bx, by, 1.6 + rng() * (hwmax || 6), { c: i % 3 ? R : O, w: i % 3 ? 1 : 0.8, h: hh, hr: hr < 0.3, fill: !hh && rng() < 0.3 ? P : null });
-    }
+    for (var i = 0; i < n; i++) { var x = x1 + (x2 - x1) * ((i + 0.5) / n + (rng() - 0.5) * 0.6 / n), len = lmin + rng() * (lmax - lmin), k = Math.floor(rng() * 4), c = rng() < 0.3 ? O : R; s += drop(x, y, len, k, c); if (rng() < 0.4) s += dot(x, y, 1.1, c); }
     return s;
   }
-  // 切面：从内部一点把多边形切成三角面，面与面交替排线、浅填或留白
-  function facet(a, c, seed, w) {
-    var rng = rnd(seed), s = "";
-    for (var i = 0; i < a.length; i++) {
-      var t = [c, a[i], a[(i + 1) % a.length]], r = rng();
-      s += r < 0.35 ? hpg(t) : r < 0.55 ? hpg(t, true) : r < 0.7 ? pg(t, 0, "none", P) : "";
-      s += ln(c[0], c[1], a[i][0], a[i][1], 0.6, i % 2 ? O : R);
-    }
-    return s + pg(a, w || 1.5);
-  }
-  // 放射：长短不一的线，每隔几根换成一根细长尖刺
-  function burst(cx, cy, r, n, seed, o) {
-    o = o || {};
-    var rng = rnd(seed), s = "", a0 = o.a0 == null ? 0 : o.a0, a1 = o.a1 == null ? 360 : o.a1, mx = o.max || r;
-    for (var i = 0; i < n; i++) {
-      var a = (a0 + (a1 - a0) * (i + 0.5) / n + (rng() - 0.5) * 4) * D2R, l = mx * (0.25 + 0.75 * rng()), c = Math.cos(a), sn = Math.sin(a);
-      if (i % 4 === 1) s += shard(cx + c * (r + l * 1.3), cy + sn * (r + l * 1.3), cx + c * (r + 2), cy + sn * (r + 2), 1.9, { w: 0.7, c: O, fill: P, inner: false });
-      else s += ln(cx + c * (r + 3), cy + sn * (r + 3), cx + c * (r + l), cy + sn * (r + l), i % 2 ? 0.55 : 0.9, i % 2 ? O : R);
-    }
-    return s;
-  }
-  // 边框：四条线越过角点，内侧再错开一条橙色副线
-  function box(x, y, w, h, c, wd, e) {
-    e = e == null ? 7 : e; c = c || R; wd = wd || 1;
-    return ln(x - e, y, x + w + e, y, wd, c) + ln(x - e, y + h, x + w + e, y + h, wd, c) + ln(x, y - e, x, y + h + e, wd, c) + ln(x + w, y - e, x + w, y + h + e, wd, c) +
-      ln(x + 3, y + 3, x + w * 0.6, y + 3, 0.5, c === R ? O : R) + ln(x + 3, y + 3, x + 3, y + h * 0.55, 0.5, c === R ? O : R);
-  }
-  function drop(x, y, len, r, c) { r = r || 2.8; c = c || R; return ln(x, y, x, y + len - r, 0.7, c) + ci(x, y + len, r, 0.9, c, BG) + ci(x, y + len, r * 0.38, 0, c, c); }
+  // 珠链：直线上等距圆点，每隔几颗换成小空心圆
+  function chain(x1, y1, x2, y2, c) { var n = Math.max(2, Math.round(Math.hypot(x2 - x1, y2 - y1) / 4.6)), s = ""; for (var i = 0; i <= n; i++) { var p = lerp([x1, y1], [x2, y2], i / n); s += i % 4 === 2 ? ci(p[0], p[1], 1.7, 0.7, c || R, BG) : dot(p[0], p[1], 0.8, c); } return s; }
   function spark(cx, cy, s, c) { var k = 0.24; return pg([[cx, cy - s], [cx + s * k, cy - s * k], [cx + s, cy], [cx + s * k, cy + s * k], [cx, cy + s], [cx - s * k, cy + s * k], [cx - s, cy], [cx - s * k, cy - s * k]], 0.5, c || R, c || R); }
   function cross(x, y, s, c) { return ln(x, y - s, x, y + s * 1.6, 0.8, c || R) + ln(x - s * 0.7, y, x + s * 0.7, y, 0.8, c || R); }
   function reticle(x, y, r, c) { return ci(x, y, r, 0.9, c || R, BG) + ln(x - r * 1.7, y, x + r * 1.7, y, 0.6, c || R) + ln(x, y - r * 1.7, x, y + r * 1.7, 0.6, c || R); }
-  function tri(cx, cy, s, up, barred, o) { var h = s * 0.9, y1 = up ? cy - h : cy + h, y2 = up ? cy + h * 0.7 : cy - h * 0.7, a = [[cx, y1], [cx + s, y2], [cx - s, y2]]; return (o === "H" ? hpg(a) : o ? pg(a, 0, "none", o) : "") + pg(a, 1.2) + (barred ? ln(cx - s * 0.7, cy, cx + s * 0.7, cy, 0.9, O) : ""); }
   function onC(cx, cy, r, deg) { var a = deg * D2R; return [cx + r * Math.cos(a), cy + r * Math.sin(a)]; }
-  function arc(cx, cy, r, d0, d1, w, c, ex) { var p = onC(cx, cy, r, d0), q = onC(cx, cy, r, d1); return path("M" + f(p[0]) + " " + f(p[1]) + " A" + r + " " + r + " 0 " + ((d1 - d0) % 360 > 180 ? 1 : 0) + " 1 " + f(q[0]) + " " + f(q[1]), w, c, "none", ex); }
-  // 排线扇面：圆环的一段，用于日轮、月轮
-  function sector(cx, cy, r1, r2, d0, d1) { var a = onC(cx, cy, r2, d0), b = onC(cx, cy, r2, d1), c = onC(cx, cy, r1, d1), d = onC(cx, cy, r1, d0), lg = d1 - d0 > 180 ? 1 : 0; var dd = "M" + f(a[0]) + " " + f(a[1]) + " A" + r2 + " " + r2 + " 0 " + lg + " 1 " + f(b[0]) + " " + f(b[1]) + " L" + f(c[0]) + " " + f(c[1]) + " A" + r1 + " " + r1 + " 0 " + lg + " 0 " + f(d[0]) + " " + f(d[1]) + " Z"; return path(dd, 0, "none", P) + path(dd, 0, "none", "HATCH") + path(dd, 0.6, O); }
+  function arc(cx, cy, r, d0, d1, w, c, ex) { var p = onC(cx, cy, r, d0), q = onC(cx, cy, r, d1); return path("M" + f(p[0]) + " " + f(p[1]) + " A" + f(r) + " " + f(r) + " 0 " + ((d1 - d0) % 360 > 180 ? 1 : 0) + " 1 " + f(q[0]) + " " + f(q[1]), w, c, "none", ex); }
+  // 细长浅橙薄片
+  function sliver(ax, ay, bx, by, hw, c) { var dx = bx - ax, dy = by - ay, l = Math.hypot(dx, dy) || 1, nx = -dy / l * hw, ny = dx / l * hw; return pg([[ax, ay], [bx + nx, by + ny], [bx - nx, by - ny]], 0.6, c || O, P); }
+  // 排线扇面：圆环的一段
+  function sector(cx, cy, r1, r2, d0, d1, k) { var a = onC(cx, cy, r2, d0), b = onC(cx, cy, r2, d1), c = onC(cx, cy, r1, d1), d = onC(cx, cy, r1, d0), lg = d1 - d0 > 180 ? 1 : 0; var dd = "M" + f(a[0]) + " " + f(a[1]) + " A" + f(r2) + " " + f(r2) + " 0 " + lg + " 1 " + f(b[0]) + " " + f(b[1]) + " L" + f(c[0]) + " " + f(c[1]) + " A" + f(r1) + " " + f(r1) + " 0 " + lg + " 0 " + f(d[0]) + " " + f(d[1]) + " Z"; return path(dd, 0, "none", P) + path(dd, 0, "none", k === 1 ? "HATCHR" : k === 2 ? "HATCHH" : "HATCH") + path(dd, 0.6, O); }
+  // 半圆排线盘：浅橙底、排线、粗外弧、细内弧、几根径向线、越过端点的弦
+  function halfDisk(cx, cy, r, d0, d1, k) {
+    var s = sector(cx, cy, 0, r, d0, d1, k == null ? 2 : k) + arc(cx, cy, r, d0, d1, 1.4, R) + arc(cx, cy, r - 6, d0 + 6, d1 - 6, 0.5, O);
+    for (var d = d0 + 30; d < d1; d += 30) { var p = onC(cx, cy, r + 4, d); s += ln(cx, cy, p[0], p[1], 0.45, O); }
+    var a = onC(cx, cy, r + 8, d0), b = onC(cx, cy, r + 8, d1);
+    return s + ln(a[0], a[1], b[0], b[1], 1, R) + dot(a[0], a[1], 1.2) + dot(b[0], b[1], 1.2);
+  }
+  // 放射日轮：断开的粗弧与细弧，长短不齐的射线，偶尔换成薄片或点尾
+  function halo(cx, cy, r, seed, o) {
+    o = o || {}; var rng = rnd(seed), s = "", a0 = o.a0 == null ? 0 : o.a0, a1 = o.a1 == null ? 360 : o.a1, n = o.n || 28, mn = o.min || 5, mx = o.max || 22, sp = a1 - a0;
+    s += arc(cx, cy, r, a0 + sp * 0.08, a0 + sp * 0.52, o.aw || 1.7, R) + arc(cx, cy, r + 4, a0 + sp * 0.56, a1 - sp * 0.05, 0.55, O) + arc(cx, cy, r + 1.5, a0 + sp * 0.6, a0 + sp * 0.8, 1, R);
+    for (var i = 0; i < n; i++) {
+      var a = (a0 + sp * (i + 0.5) / n + (rng() - 0.5) * 5) * D2R, c = Math.cos(a), sn = Math.sin(a), r0 = r + 7 + rng() * 4, l = mn + rng() * (mx - mn); if (i % 5 === 2) l *= 1.7;
+      if (i % 7 === 3) s += sliver(cx + c * (r0 + l * 1.25), cy + sn * (r0 + l * 1.25), cx + c * r0, cy + sn * r0, 1.8);
+      else { s += ln(cx + c * r0, cy + sn * r0, cx + c * (r0 + l), cy + sn * (r0 + l), i % 2 ? 0.55 : 1.1, i % 3 ? R : O); if (rng() < 0.3) s += dot(cx + c * (r0 + l), cy + sn * (r0 + l), 1); }
+    }
+    return s;
+  }
+  // 错位方框：四边越过角点、长短不一，一角有准星，内侧两边有错开的副线
+  function frame(x, y, w, h, c, wd, seed) {
+    var rng = rnd(seed || 1), e = function () { return 4 + rng() * 10; }, c2 = c === O ? R : O, s = ""; c = c || R; wd = wd || 1;
+    s += ln(x - e(), y, x + w + e(), y, wd, c) + ln(x - e(), y + h, x + w + e(), y + h, wd, c) + ln(x, y - e(), x, y + h + e(), wd, c) + ln(x + w, y - e(), x + w, y + h + e(), wd, c);
+    s += ln(x + 3.5, y + 3.5, x + w * (0.4 + rng() * 0.4), y + 3.5, 0.5, c2) + ln(x + w - 3.5, y + h - 3.5, x + w - 3.5, y + h * (0.2 + rng() * 0.4), 0.5, c2);
+    var k = Math.floor(rng() * 4), cx = k % 2 ? x + w : x, cy = k < 2 ? y : y + h;
+    return s + reticle(cx, cy, 2.8, c) + dot(x + w + 6, y + h, 1.2, c) + dot(x - 6, y, 1.2, c);
+  }
+  // 梯级横线：n 根平行线，长度和粗细交替
+  function ladder(x, y, w, n, gap, c) { var s = ""; for (var i = 0; i < n; i++) { var e = i % 2 ? 3 : 0; s += ln(x - e, y + i * gap, x + w + (i % 3 === 1 ? 5 : 0), y + i * gap, i % 2 ? 0.5 : 1, i % 2 ? O : (c || R)); if (i % 3 === 1) s += dot(x + w + 5, y + i * gap, 1); } return s; }
+  // 碎晶生长：从起始三角开始，每次在一条已有边上向外长出新三角，方向朝 dir 偏置；先铺填色层，再画线条层
+  function crystal(seed, A, B, C, n, dir, o) {
+    o = o || {}; var rng = rnd(seed), tris = [[A, B, C]], open = [], dv = [Math.cos(dir * D2R), Math.sin(dir * D2R)], bd = o.bounds || [6, 6, 204, 312], g = 0, i;
+    for (i = 0; i < 3; i++) open.push([tris[0][i], tris[0][(i + 1) % 3], tris[0][(i + 2) % 3]]);
+    while (tris.length <= n && open.length && g++ < n * 8) {
+      var e = open.splice(open.length - 1 - Math.floor(rng() * Math.min(open.length, o.k || 4)), 1)[0], p = e[0], q = e[1], r = e[2], dx = q[0] - p[0], dy = q[1] - p[1], L = Math.hypot(dx, dy);
+      if (L < (o.minEdge || 9)) continue;
+      var nx = -dy / L, ny = dx / L, mx = (p[0] + q[0]) / 2, my = (p[1] + q[1]) / 2; if ((r[0] - mx) * nx + (r[1] - my) * ny > 0) { nx = -nx; ny = -ny; }
+      if (nx * dv[0] + ny * dv[1] < (o.minDot == null ? -0.15 : o.minDot) && rng() < 0.85) continue;
+      var hmin = o.hmin || 0.45, h = L * (hmin + rng() * ((o.hmax || 1.4) - hmin)); if (rng() < 0.15) h *= 1.8; h = Math.min(h, o.cap || 90);
+      var t = 0.15 + 0.7 * rng(), ax, ay, ok = false;
+      for (var k = 0; k < 5; k++) { ax = p[0] + dx * t + nx * h; ay = p[1] + dy * t + ny * h; if (ax > bd[0] && ax < bd[2] && ay > bd[1] && ay < bd[3]) { ok = true; break; } h *= 0.6; }
+      if (!ok) continue;
+      var nt = [p, q, [ax, ay]]; tris.push(nt); open.push([q, nt[2], p]); open.push([nt[2], p, q]);
+    }
+    // 大三角沿最长边再切成两片，切到两层，切出来的面各有各的样式；大三角本身的外轮廓最后加粗画一遍
+    var pieces = [], big = [], sp = o.split || 650, depth = o.depth == null ? 2 : o.depth;
+    function split(t, d) {
+      var ar = Math.abs(area2(t)) / 2;
+      if (d < depth && ar > sp && rng() < 0.85) {
+        if (d === 0) big.push(t);
+        var L = [0, 1, 2].map(function (i) { var a = t[i], b = t[(i + 1) % 3]; return Math.hypot(b[0] - a[0], b[1] - a[1]); }), i = L.indexOf(Math.max.apply(null, L));
+        var a = t[i], b = t[(i + 1) % 3], c = t[(i + 2) % 3], m = lerp(a, b, 0.3 + rng() * 0.4);
+        split([a, m, c], d + 1); split([m, b, c], d + 1);
+      } else pieces.push(t);
+    }
+    tris.forEach(function (t) { split(t, 0); });
+    var fl = "", st = "";
+    pieces.forEach(function (t, j) {
+      var r1 = rng(), r2 = rng(), ar = Math.abs(area2(t)) / 2, s2 = { w: j === 0 ? (o.w0 || 1.7) : 0.9 + rng() * 0.8, c: r2 < 0.22 ? O : R };
+      if (r1 < 0.3) { s2.wedge = Math.floor(rng() * 3); s2.hk = r2 < 0.4 ? 1 : r2 < 0.7 ? 0 : 2; s2.inset = true; }
+      else if (r1 < 0.44) { s2.fill = "P"; s2.inset = true; }
+      else if (r1 < 0.52 && ar < 220) s2.fill = "O";
+      else if (r1 < 0.62) { s2.fill = "H"; s2.hk = r2 < 0.5 ? 1 : 0; }
+      else s2.inset = r2 < 0.75;
+      if (rng() < 0.22) s2.dots = Math.floor(rng() * 3);
+      if (rng() < 0.3) s2.vdot = 2;
+      var tt = tri(t[0], t[1], t[2], s2); fl += tt.f; st += tt.s;
+      if (o.hang && rng() < o.hang) { var v = t[0][1] > t[1][1] ? t[0] : t[1]; if (t[2][1] > v[1]) v = t[2]; st += drop(v[0], v[1], 8 + rng() * 26, Math.floor(rng() * 4), rng() < 0.3 ? O : R); }
+    });
+    big.forEach(function (t) { st += pg(t, o.w0 || 1.7, R); });
+    return fl + st;
+  }
+  // 垫一道纸色粗线再画主线，让关键线条从碎晶里切出来
+  function knock(a, w, c) { return pl(a, (w || 2) + 3, BG) + pl(a, w || 2, c || R); }
+  // 两个圆叠出的月牙：浅橙月牙面，叠加的圆只留细线
+  function crescent(cx, cy, r, dx, dy, r2) { var id = "m" + (uid++); return '<defs><clipPath id="' + id + '"><circle cx="' + f(cx) + '" cy="' + f(cy) + '" r="' + f(r) + '"/></clipPath></defs>' + ci(cx, cy, r, 0, R, P) + ci(cx + dx, cy + dy, r2, 0, R, BG, ' clip-path="url(#' + id + ')"') + ci(cx, cy, r, 1.8) + ci(cx + dx, cy + dy, r2, 0.6, O); }
+
+  function defs(id) {
+    return '<pattern id="' + id + '" width="2.6" height="2.6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="2.6" stroke="' + O + '" stroke-width="0.55"/></pattern>' +
+      '<pattern id="' + id + 'r" width="2.4" height="2.4" patternUnits="userSpaceOnUse" patternTransform="rotate(-40)"><line x1="0" y1="0" x2="0" y2="2.4" stroke="' + R + '" stroke-width="0.5"/></pattern>' +
+      '<pattern id="' + id + 'h" width="2.4" height="2.4" patternUnits="userSpaceOnUse" patternTransform="rotate(5)"><line x1="0" y1="0" x2="2.4" y2="0" stroke="' + O + '" stroke-width="0.5"/></pattern>' +
+      '<clipPath id="' + id + 'c"><rect x="6" y="6" width="198" height="306"/></clipPath>';
+  }
+  function fill(art, id) { return art.replace(/HATCHR/g, "url(#" + id + "r)").replace(/HATCHH/g, "url(#" + id + "h)").replace(/HATCH/g, "url(#" + id + ")"); }
 
   function card(num, en, zh, art) {
     var id = "h" + (uid++);
-    var defs = '<pattern id="' + id + '" width="2.6" height="2.6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="2.6" stroke="' + O + '" stroke-width="0.55"/></pattern>' +
-      '<pattern id="' + id + 'r" width="2.4" height="2.4" patternUnits="userSpaceOnUse" patternTransform="rotate(-40)"><line x1="0" y1="0" x2="0" y2="2.4" stroke="' + R + '" stroke-width="0.5"/></pattern>' +
-      '<clipPath id="' + id + 'c"><rect x="6" y="6" width="198" height="348"/></clipPath>';
-    art = art.replace(/HATCHR/g, "url(#" + id + "r)").replace(/HATCH/g, "url(#" + id + ")");
     return '<svg viewBox="0 0 210 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + zh + '">' +
-      '<defs>' + defs + '</defs>' +
+      '<defs>' + defs(id) + '</defs>' +
       '<rect width="210" height="360" fill="' + BG + '"/>' +
       '<g fill="none" stroke-linecap="round" stroke-linejoin="round">' +
       '<rect x="8" y="8" width="194" height="344" stroke="' + R + '" stroke-width="0.7"/>' +
       ln(4, 14, 22, 14, 0.5, O) + ln(14, 4, 14, 22, 0.5, O) + ln(188, 346, 206, 346, 0.5, O) + ln(196, 338, 196, 356, 0.5, O) +
-      '<g clip-path="url(#' + id + 'c)">' + art + '</g>' +
+      '<g clip-path="url(#' + id + 'c)">' + fill(art, id) + '</g>' +
       ln(24, 316, 186, 316, 0.6, R) + ln(40, 319, 170, 319, 0.4, O) + spark(105, 316, 4.5) +
       '</g>' +
       '<text x="24" y="34" font-family="Cormorant Garamond, Georgia, serif" font-weight="600" font-size="15" fill="' + R + '">' + num + '</text>' +
@@ -161,105 +226,128 @@ figcaption b { color: var(--fg); font-weight: 700; }
   }
 
   var CARDS = [
-    { num: "0", en: "THE FOOL", zh: "愚者", note: "放射的日轮、碎裂的崖角、崖边一点与坠向虚空的点线、玫瑰准星", art:
-      box(92, 50, 98, 100, O, 0.7) + box(104, 62, 86, 76, R, 0.9, 5) +
-      burst(140, 100, 24, 30, 11, { max: 34 }) + sector(140, 100, 17, 24, 200, 330) + ci(140, 100, 24, 1.4) + ci(140, 100, 13, 0.8, O) + reticle(140, 100, 3.2) +
-      arc(140, 100, 54, 100, 260, 0.5, O, ' stroke-dasharray="2 2.5"') +
-      facet([[10, 310], [66, 256], [96, 230], [124, 200], [100, 310]], [80, 280], 2, 1.6) + facet([[100, 310], [124, 200], [124, 310]], [116, 282], 4, 1.4) +
-      cluster(3, 58, 268, 18, 4, -45, 30, 30, 50, 10) + shard(30, 250, 70, 270, 8, { c: O, fill: P }) +
-      shard(150, 248, 124, 214, 6, { h: 1 }) + shard(176, 286, 126, 232, 5, { c: O }) +
-      ci(130, 193, 4.2, 1.2, R, BG) + ci(130, 193, 1.4, 0, R, R) +
-      path("M136 190 C160 184 182 198 194 232", 1.3, R, "none", ' stroke-dasharray="0.1 3.4"') +
-      ci(48, 150, 10, 1) + ci(48, 150, 5, 0.7, O) + spark(48, 150, 3) + ln(48, 160, 48, 178, 0.7) + spark(48, 139, 3) + spark(37, 150, 3) + spark(59, 150, 3) +
-      drop(98, 150, 22) + drop(184, 150, 44, 3, O) + drop(160, 138, 12, 2.2) +
-      spark(34, 74, 4) + spark(186, 186, 3.4) + cross(66, 96, 3) + cross(174, 250, 3, O) + dots(22, 60, 70, 60) },
+    { num: "0", en: "THE FOOL", zh: "愚者", note: "核心象征：右上日轮、左下碎晶崖壁与垂直崖面、崖顶准星一点和坠入虚空的珠链、左侧玫瑰准星带刺茎、崖顶小犬碎晶", art:
+      frame(96, 36, 94, 90, O, 0.7, 101) + frame(108, 48, 84, 74, R, 0.9, 102) +
+      halfDisk(50, 184, 42, 180, 360) +
+      halo(150, 80, 24, 103, { max: 30, n: 30 }) + ci(150, 80, 24, 1.8) + ci(150, 80, 15, 0.6, O) + sector(150, 80, 16, 23, 200, 330, 0) + reticle(150, 80, 3) +
+      arc(150, 80, 56, 100, 250, 0.5, O, ' stroke-dasharray="2 2.5"') +
+      crystal(104, [40, 312], [132, 312], [128, 198], 18, -140, { bounds: [8, 112, 136, 312], hang: 0.25, cap: 64, split: 500 }) +
+      knock([[132, 312], [128, 198]], 2.2) +
+      crystal(105, [98, 206], [118, 206], [110, 188], 4, -60, { bounds: [78, 160, 136, 210], cap: 26, split: 9999 }) + dot(110, 188, 1.4) +
+      ci(128, 196, 4.4, 1.4, R, BG) + dot(128, 196, 1.4) + spark(128, 182, 4) +
+      dotsP("M133 194 C158 184 178 196 186 226") + bead(186, 228, 0) + drop(186, 232, 50, 2) + chain(142, 196, 172, 214, O) +
+      ci(38, 78, 9, 1.4) + ci(38, 78, 5, 0.6, O) + spark(38, 78, 3) + ln(38, 87, 38, 124, 0.9) + ln(38, 96, 44, 91, 0.6) + ln(38, 106, 32, 101, 0.6) + ln(38, 116, 44, 111, 0.6) +
+      fringe(100, 188, 126, 106, 6, 10, 48) + ladder(150, 142, 44, 4, 7) +
+      chain(20, 48, 88, 48) + spark(62, 60, 4) + spark(176, 168, 3.4) + cross(76, 148, 3) + cross(170, 290, 3, O) + spark(160, 292, 3) + dotsL(150, 262, 196, 262) },
 
-    { num: "I", en: "THE MAGICIAN", zh: "魔术师", note: "无限符号、上下贯通的双线主轴、碎裂的菱形、四元素三角、下坠的碎片", art:
-      box(46, 110, 118, 120, O, 0.7) + box(58, 98, 112, 120, R, 0.9, 5) +
-      burst(105, 170, 62, 26, 21, { max: 26 }) +
-      path("M82 62 C82 51 101 51 105 62 C109 73 128 73 128 62 C128 51 109 51 105 62 C101 73 82 73 82 62 Z", 1.6) + ci(105, 62, 2, 0, R, R) +
-      ln(105, 78, 105, 300, 1.1) + ln(109, 86, 109, 292, 0.5, O) + pg([[100, 88], [105, 78], [110, 88]], 1, R, R) + pg([[100, 290], [105, 300], [110, 290]], 1, R, R) +
-      hpg([[105, 122], [153, 170], [105, 170]]) + hpg([[105, 218], [57, 170], [105, 170]], true) +
-      pg([[105, 122], [153, 170], [105, 218], [57, 170]], 1.5) + pg([[105, 134], [141, 170], [105, 206], [69, 170]], 0.6, O) +
-      ln(57, 170, 153, 170, 0.6) + reticle(105, 170, 5) +
-      tri(105, 104, 8, true, false, P) + tri(178, 170, 8, true, true) + tri(105, 240, 8, false, false, "H") + tri(32, 170, 8, false, true) +
-      cluster(5, 152, 262, 14, 4, 95, 30, 26, 46, 8) + cluster(6, 58, 252, 12, 3, 80, 30, 22, 36, 7) +
-      drop(70, 230, 34) + drop(146, 230, 20, 2.4, O) + drop(160, 218, 56) +
-      shard(105, 262, 105, 310, 30, { h: -1, hr: true }) +
-      spark(34, 80, 4) + spark(176, 92, 3.4) + cross(40, 220, 3, O) + dots(140, 46, 190, 46) },
+    { num: "I", en: "THE MAGICIAN", zh: "魔术师", note: "核心象征：顶端无限符号、贯穿上下的主轴（上指向天、下坠向地）、中央碎裂的菱形、四角四元素——杯弧、剑片、杖线、币环", art:
+      frame(44, 96, 122, 130, O, 0.7, 111) + frame(56, 86, 110, 112, R, 0.9, 112) +
+      crystal(113, [105, 104], [150, 170], [105, 170], 11, 300, { bounds: [60, 60, 200, 230], cap: 60 }) +
+      crystal(114, [105, 236], [60, 170], [105, 170], 11, 140, { bounds: [10, 120, 150, 312], cap: 60, hang: 0.3 }) +
+      pg([[105, 104], [150, 170], [105, 236], [60, 170]], 1.9) + pg([[105, 114], [140, 170], [105, 226], [70, 170]], 0.5, O) + ln(60, 170, 150, 170, 0.6) + reticle(105, 170, 5) +
+      ln(105, 30, 105, 306, 1.5) + ln(109, 40, 109, 300, 0.5, O) + pg([[99, 40], [105, 28], [111, 40]], 1, R, R) + pg([[99, 296], [105, 308], [111, 296]], 1, R, R) + dot(105, 24, 1.3) + bead(105, 311, 0) +
+      halo(105, 58, 15, 115, { a0: 195, a1: 345, n: 12, max: 16 }) +
+      path("M84 58 C84 48 100 48 105 58 C110 68 126 68 126 58 C126 48 110 48 105 58 C100 68 84 68 84 58 Z", 2) + path("M90 58 C90 52 101 52 105 58 C109 64 120 64 120 58 C120 52 109 52 105 58 C101 64 90 64 90 58 Z", 0.5, O) + dot(105, 58, 1.5) +
+      path("M26 112 a11 11 0 0 0 22 0 Z", 1.6, R, P) + path("M30 112 a7 7 0 0 0 14 0", 0.5, O) + ln(37, 123, 37, 134, 1) + ln(30, 134, 44, 134, 1.2) + spark(37, 104, 2.6, O) +
+      T([172, 86], [167, 140], [177, 140], { w: 1.6, inset: 2, wedge: 0, k: 0.3 }) + ln(162, 134, 182, 134, 1.3) + ln(172, 140, 172, 150, 1) + dot(172, 151, 1.4) +
+      tl(28, 254, 52, 212, 1.6) + dot(28, 254, 2) + ci(52, 212, 2.6, 0.9, R, BG) + spark(56, 206, 3) + ln(31, 248, 55, 206, 0.5, O) +
+      ci(172, 232, 10, 1.6) + ci(172, 232, 6, 0.6, O) + reticle(172, 232, 2.6) + ci(172, 232, 13, 0.5, O, "none", ' stroke-dasharray="2 2.5"') +
+      fringe(50, 160, 226, 116, 6, 10, 50) + ladder(146, 250, 34, 3, 7) + ladder(14, 150, 30, 3, 6) +
+      spark(32, 70, 4) + spark(178, 70, 3.4) + cross(40, 288, 3, O) + chain(132, 42, 190, 42) + dotsL(16, 300, 70, 300) },
 
-    { num: "II", en: "HIGH PRIESTESS", zh: "女祭司", note: "一实一虚两根柱、三相月、碎成多面的帷幕三角、经卷短横、脚下新月", art:
-      arc(105, 92, 66, 180, 360, 0.9) + arc(105, 92, 58, 190, 350, 0.5, O, ' stroke-dasharray="2 2.5"') +
-      hpg([[30, 90], [50, 90], [50, 302], [30, 302]], true) + box(30, 90, 20, 212, R, 1.3, 6) + box(160, 90, 20, 212, R, 1.3, 6) + ln(165, 96, 165, 296, 0.5, O) + ln(175, 96, 175, 296, 0.5, O) +
-      shard(40, 70, 40, 90, 12, { h: 1 }) + shard(170, 70, 170, 90, 12, { c: O }) +
-      ci(105, 74, 7, 1.2, R, P) + path("M92 67 A8 8 0 1 0 92 81 A5 7 0 1 1 92 67 Z", 0.9) + path("M118 67 A8 8 0 1 1 118 81 A5 7 0 1 0 118 67 Z", 0.9) +
-      hpg([[105, 108], [78, 200], [105, 182]]) + hpg([[105, 182], [132, 286], [158, 286]], true) + hpg([[78, 200], [52, 286], [86, 286]]) +
-      pg([[105, 108], [158, 286], [52, 286]], 1.3) + pl([[105, 108], [78, 200], [52, 286]], 0.6, O) + pl([[78, 200], [105, 182], [132, 286]], 0.7) + pl([[105, 182], [158, 286]], 0.5, O) + ln(78, 200, 86, 286, 0.6) +
-      cross(105, 140, 6) + pg([[88, 228], [122, 228], [122, 235], [88, 235]], 1, R, P) +
-      drop(64, 100, 50) + drop(146, 100, 30, 2.4, O) + drop(120, 104, 18, 2) +
-      ci(105, 296, 13, 0, R, P) + ci(111, 291, 12, 0, R, BG) + ci(105, 296, 13, 1.3) +
-      cluster(8, 188, 236, 6, 3, 100, 30, 18, 32, 6) + spark(18, 110, 3) + spark(192, 70, 3.6) + spark(78, 120, 2.6) + dots(56, 52, 154, 52) },
+    { num: "II", en: "HIGH PRIESTESS", zh: "女祭司", note: "核心象征：左实右虚两根柱（一暗一明）、柱顶三相月、柱间悬垂的帷幕碎晶与珠帘、中央经卷、脚下新月", art:
+      arc(105, 104, 72, 190, 350, 1.6) + arc(105, 104, 64, 200, 340, 0.5, O, ' stroke-dasharray="2 2.5"') + halo(105, 104, 74, 121, { a0: 205, a1: 335, n: 14, max: 14, aw: 0.01 }) +
+      ci(105, 48, 7, 1.6, R, P) + path("M90 41 A8 8 0 1 0 90 55 A5 7 0 1 1 90 41 Z", 1.1) + path("M120 41 A8 8 0 1 1 120 55 A5 7 0 1 0 120 41 Z", 1.1) + dot(105, 48, 1.4) +
+      hpg([[26, 84], [48, 84], [48, 300], [26, 300]], 1) + frame(26, 84, 22, 216, R, 1.6, 122) + ln(37, 92, 37, 292, 0.5, O) + T([37, 62], [26, 84], [48, 84], { w: 1.4, fill: "O" }) + dot(37, 150, 2.4) +
+      frame(162, 84, 22, 216, R, 1.6, 123) + ln(167, 92, 167, 292, 0.5, O) + ln(179, 92, 179, 292, 0.5, O) + T([173, 62], [162, 84], [184, 84], { w: 1.4, inset: true }) + ci(173, 150, 2.4, 1, R, BG) +
+      ladder(50, 96, 20, 5, 6) + ladder(140, 230, 20, 5, 6) +
+      ln(40, 96, 170, 96, 1.6) + dot(40, 96, 1.6) + dot(170, 96, 1.6) +
+      crystal(124, [58, 96], [152, 96], [105, 196], 14, 90, { bounds: [50, 90, 160, 300], cap: 70, hang: 0.3, w0: 1.6 }) +
+      fringe(56, 154, 96, 125, 9, 8, 46) +
+      pg([[88, 228], [122, 228], [122, 236], [88, 236]], 1.5, R, P) + ci(88, 232, 4, 1.3, R, BG) + ci(122, 232, 4, 1.3, R, BG) + dot(88, 232, 1.2) + dot(122, 232, 1.2) + dotsL(94, 232, 116, 232, O) +
+      crescent(105, 290, 14, 7, -5, 12) + sector(105, 290, 17, 21, 20, 160, 1) +
+      spark(18, 112, 3) + spark(192, 70, 3.6) + spark(80, 126, 2.8, O) + cross(130, 128, 3) + cross(16, 260, 3, O) + chain(56, 40, 82, 40) + chain(128, 40, 154, 40) },
 
-    { num: "XVI", en: "THE TOWER", zh: "高塔", note: "被折线劈开的塔、错位飞离的塔顶、向四周迸散的碎片、两枚坠落的点", art:
-      box(70, 118, 72, 190, O, 0.6) + dash(105, 46, 105, 310) +
-      facet([[84, 310], [126, 310], [121, 170], [89, 170]], [100, 236], 7, 1.7) +
-      pl([[89, 170], [96, 200], [108, 238], [104, 270], [112, 310]], 0.9) + ln(92, 178, 92, 300, 0.5, O) +
-      '<g transform="translate(22 -26) rotate(22 105 140)">' + hpg([[89, 160], [121, 160], [116, 120], [94, 120]]) + pg([[89, 160], [121, 160], [116, 120], [94, 120]], 1.4) + pg([[94, 120], [105, 102], [116, 120]], 1, R, R) + ci(105, 96, 3, 0.9, R, BG) + '</g>' +
-      pl([[200, 36], [152, 92], [172, 98], [112, 162]], 1.9) + pl([[194, 44], [156, 88], [176, 94], [126, 150]], 0.6, O) +
-      burst(112, 164, 8, 20, 31, { max: 22 }) + cluster(9, 112, 168, 10, 9, null, 30, 24, 50, 9) +
-      ci(48, 200, 3.6, 1.1, R, BG) + dots(50, 194, 66, 164) + shard(42, 226, 48, 204, 4, { c: O }) +
-      ci(170, 214, 3.6, 1.1, R, BG) + dots(168, 208, 152, 182) + shard(176, 240, 170, 218, 4, { h: 1 }) +
-      drop(140, 118, 40, 2.6, O) + drop(76, 118, 70) +
-      spark(34, 120, 4) + spark(180, 160, 3.4) + cross(40, 280, 3) + cross(174, 290, 3, O) + ln(16, 310, 194, 310, 1) },
+    { num: "XVI", en: "THE TOWER", zh: "高塔", note: "核心象征：中央塔身（左暗右明）、从右上劈下的双线闪电、被震飞到右上方的王冠、塔顶迸出的碎晶、左右两枚坠落的点与碎片", art:
+      frame(66, 104, 78, 120, O, 0.6, 131) + dash(105, 30, 105, 310) +
+      hpg([[86, 152], [103, 152], [103, 312], [86, 312]], 1) + pg([[86, 152], [124, 152], [124, 312], [86, 312]], 1.9) + ln(120, 160, 120, 304, 0.5, O) + ln(90, 160, 90, 304, 0.5, O) +
+      ladder(86, 190, 38, 4, 24) + pl([[106, 154], [112, 190], [100, 230], [110, 270], [104, 312]], 0.7, O, ' stroke-dasharray="2 2"') +
+      crystal(132, [104, 152], [124, 152], [116, 124], 12, -70, { bounds: [56, 30, 190, 176], cap: 50, split: 500 }) +
+      crystal(133, [86, 152], [104, 152], [82, 130], 8, 200, { bounds: [14, 60, 110, 180], cap: 46, split: 500 }) +
+      halo(114, 150, 10, 134, { a0: 180, a1: 360, n: 16, max: 18, aw: 0.01 }) +
+      '<g transform="translate(40 -40) rotate(28 105 140)">' + pg([[90, 152], [120, 152], [120, 134], [112, 142], [105, 126], [98, 142], [90, 134]], 5, BG, BG) + hpg([[90, 152], [120, 152], [120, 134], [112, 142], [105, 126], [98, 142], [90, 134]], 0) + pg([[90, 152], [120, 152], [120, 134], [112, 142], [105, 126], [98, 142], [90, 134]], 1.8) + ln(93, 148, 117, 148, 0.5, O) + dot(105, 126, 1.6) + dot(90, 134, 1.6) + dot(120, 134, 1.6) + '</g>' +
+      knock([[198, 18], [150, 84], [170, 92], [116, 152]], 2.6) + pl([[192, 28], [154, 80], [174, 88], [128, 140]], 0.6, O) + spark(118, 150, 5) +
+      ci(50, 206, 3.8, 1.3, R, BG) + dot(50, 206, 1.3) + dotsP("M54 200 C62 182 72 172 82 164") + T([50, 214], [42, 236], [60, 240], { w: 1.2, wedge: 0, k: 0.5, hk: 1 }) + drop(50, 240, 22, 0) +
+      ci(166, 220, 3.8, 1.3, R, BG) + dot(166, 220, 1.3) + dotsP("M162 214 C154 198 146 184 136 174") + T([166, 228], [160, 252], [176, 248], { w: 1.2, fill: "P", inset: 2 }) + drop(168, 252, 30, 2, O) +
+      fringe(70, 142, 224, 135, 5, 10, 32) + ladder(14, 282, 42, 4, 7) + ladder(150, 282, 44, 3, 7) +
+      ln(10, 310, 200, 310, 1.2) + spark(34, 120, 4) + spark(186, 160, 3.4) + cross(36, 156, 3) + cross(184, 290, 3, O) + chain(16, 60, 60, 60) },
 
-    { num: "XVII", en: "THE STAR", zh: "星星", note: "两方交叠的八芒星、七颗星点、两枚倒置的碎片倾注点线、池水同心弧", art:
-      box(36, 150, 138, 100, O, 0.6) + dash(105, 44, 105, 310) +
-      burst(105, 102, 44, 32, 41, { max: 26 }) + ci(105, 102, 44, 0.5, O) +
-      hpg([[77, 74], [133, 74], [105, 102]]) + '<rect x="77" y="74" width="56" height="56" stroke="' + R + '" stroke-width="1.4"/>' +
-      '<rect x="77" y="74" width="56" height="56" stroke="' + R + '" stroke-width="1.4" fill="' + P + '" fill-opacity="0.6" transform="rotate(45 105 102)"/>' +
-      '<rect x="85" y="82" width="40" height="40" stroke="' + O + '" stroke-width="0.6" transform="rotate(22.5 105 102)"/>' + reticle(105, 102, 6) +
-      [160, 186, 212, 328, 354, 20, 90].map(function (d, i) { var p = onC(105, 102, 68, d); return spark(p[0], p[1], i === 6 ? 3 : 4.4, i % 2 ? O : R); }).join("") +
-      shard(70, 214, 70, 176, 10, { h: 1 }) + shard(140, 214, 140, 176, 10, { h: -1, hr: true }) +
-      path("M70 216 C64 244 46 266 38 296", 1.3, R, "none", ' stroke-dasharray="0.1 3.4"') + path("M140 216 C146 244 160 266 164 296", 1.3, R, "none", ' stroke-dasharray="0.1 3.4"') +
-      facet([[10, 310], [56, 282], [94, 310]], [54, 300], 17, 1.1) +
-      path("M120 310 A44 18 0 0 1 208 310", 1.1) + path("M134 310 A30 11 0 0 1 194 310", 0.7, O) + path("M148 310 A16 5 0 0 1 180 310", 0.6) +
-      drop(50, 250, 26, 2.4) + drop(160, 250, 14, 2.2, O) + cluster(12, 28, 200, 6, 3, 110, 30, 18, 32, 6) + cluster(13, 184, 190, 6, 3, 70, 30, 18, 32, 6) + ln(10, 310, 200, 310, 1) },
+    { num: "XVII", en: "THE STAR", zh: "星星", note: "核心象征：上方双方相叠的大八芒星与放射、环绕的七颗小星、左右两只倒置的碎晶容器、一链倾入右下水池、一链倾在左下陆地碎晶上", art:
+      frame(36, 148, 138, 98, O, 0.6, 141) + frame(48, 138, 116, 96, R, 0.8, 142) + dash(105, 30, 105, 310) +
+      halo(105, 96, 42, 143, { n: 34, max: 24 }) + sector(105, 96, 46, 52, 130, 240, 2) +
+      hpg([[79, 70], [131, 70], [105, 96]], 0) + hpg([[105, 96], [131, 122], [79, 122]], 1) +
+      '<rect x="79" y="70" width="52" height="52" stroke="' + R + '" stroke-width="1.8"/>' +
+      '<rect x="79" y="70" width="52" height="52" stroke="' + R + '" stroke-width="1.8" fill="' + P + '" fill-opacity="0.55" transform="rotate(45 105 96)"/>' +
+      '<rect x="86" y="77" width="38" height="38" stroke="' + O + '" stroke-width="0.5" transform="rotate(45 105 96)"/>' + '<rect x="86" y="77" width="38" height="38" stroke="' + O + '" stroke-width="0.5"/>' + reticle(105, 96, 5) +
+      [156, 190, 222, 318, 350, 24, 90].map(function (d, i) { var p = onC(105, 96, 68, d); return spark(p[0], p[1], i === 6 ? 3.2 : 4.4, i % 2 ? O : R) + (i % 2 ? "" : ci(p[0], p[1], 6.5, 0.4, O)); }).join("") +
+      fringe(40, 170, 148, 146, 9, 10, 52) +
+      T([54, 166], [80, 166], [66, 200], { w: 1.9, fill: "P", inset: true, vdot: 2, wedge: 0, k: 0.4 }) + ln(50, 166, 84, 166, 0.5, O) + T([44, 170], [54, 166], [56, 186], { w: 1, inset: 2 }) +
+      T([130, 166], [156, 166], [144, 200], { w: 1.9, wedge: 2, k: 0.5, hk: 1, inset: true }) + ln(126, 166, 160, 166, 0.5, O) + T([156, 166], [166, 170], [154, 186], { w: 1, fill: "O" }) +
+      halo(66, 202, 2, 147, { a0: 30, a1: 150, n: 6, max: 7, min: 3, aw: 0.01 }) + halo(144, 202, 2, 148, { a0: 30, a1: 150, n: 6, max: 7, min: 3, aw: 0.01 }) +
+      dotsP("M66 206 C58 232 44 258 32 294") + dotsP("M144 206 C150 232 160 256 164 288") + dotsP("M140 208 C144 232 152 256 156 286", O) +
+      crystal(144, [10, 312], [100, 312], [52, 254], 14, -80, { bounds: [8, 196, 124, 312], cap: 50, split: 500 }) +
+      halfDisk(166, 312, 40, 180, 360, 2) + arc(166, 312, 22, 190, 350, 1) + spark(166, 300, 2.8) +
+      fringe(110, 170, 246, 145, 5, 8, 36) + ladder(150, 202, 36, 4, 6) + ladder(14, 186, 26, 3, 6) + ladder(160, 262, 34, 3, 6) +
+      spark(28, 60, 3.6) + cross(182, 60, 3) + cross(22, 126, 3, O) + chain(142, 36, 192, 36) + ln(10, 310, 200, 310, 1.2) },
 
-    { num: "XVIII", en: "THE MOON", zh: "月亮", note: "放射的盈亏之月、三滴月露、一实一虚双塔、曲折的双线小路、两枚三角、半圆池", art:
-      box(62, 60, 86, 90, O, 0.6) + box(70, 68, 86, 90, R, 0.8, 4) +
-      burst(105, 104, 36, 26, 51, { max: 22 }) + ci(105, 104, 34, 0, R, P) + ci(118, 98, 30, 0, R, BG) + ci(105, 104, 34, 1.6) + sector(105, 104, 38, 44, 110, 230) + reticle(132, 104, 2.6) +
-      drop(82, 140, 20, 2.2) + drop(105, 140, 30, 2.6, O) + drop(128, 140, 22, 2.2) +
-      hpg([[26, 186], [42, 186], [42, 290], [26, 290]], true) + box(26, 186, 16, 104, R, 1.3, 5) + shard(34, 166, 34, 186, 10, { h: 1 }) +
-      box(168, 186, 16, 104, R, 1.3, 5) + ln(176, 190, 176, 286, 0.5, O) + shard(176, 166, 176, 186, 10, { c: O, fill: P }) +
-      pl([[105, 278], [88, 258], [120, 236], [92, 214], [114, 196], [104, 184]], 1.3) + pl([[112, 278], [95, 258], [127, 236], [99, 214], [121, 196], [108, 184]], 0.5, O) +
-      shard(64, 240, 64, 272, 9, { h: 1, hr: true }) + shard(146, 240, 146, 272, 9, { h: -1 }) +
-      path("M66 310 A39 24 0 0 1 144 310", 1.3, R, P) + path("M78 310 A27 15 0 0 1 132 310", 0.6, O) + ci(105, 300, 2.6, 0.8, R, R) +
-      cluster(14, 186, 140, 8, 3, 100, 30, 20, 36, 7) + cluster(15, 24, 140, 8, 3, 80, 30, 20, 36, 7) + spark(170, 60, 3.6) + spark(40, 72, 3) + ln(10, 310, 200, 310, 1) },
+    { num: "XVIII", en: "THE MOON", zh: "月亮", note: "核心象征：上方放射的盈亏之月与三滴垂下的月露、左实右虚双塔、从池中曲折上行的双线小路、路两侧化为两簇碎晶的两只兽、底部半圆水池", art:
+      frame(60, 50, 90, 88, O, 0.6, 151) + frame(72, 60, 86, 86, R, 0.8, 152) +
+      halo(105, 96, 36, 153, { n: 36, max: 30, a0: 90, a1: 450, aw: 2 }) + sector(105, 96, 34, 41, 200, 300, 2) + crescent(105, 96, 30, 12, -5, 27) + spark(124, 90, 3, O) + reticle(90, 100, 2.6) +
+      drop(84, 130, 20, 3) + drop(105, 130, 36, 0) + drop(126, 130, 24, 3, O) +
+      halo(105, 312, 48, 159, { a0: 200, a1: 340, n: 16, max: 16, min: 6, aw: 0.01 }) +
+      hpg([[22, 176], [40, 176], [40, 300], [22, 300]], 1) + frame(22, 176, 18, 124, R, 1.5, 154) + T([31, 158], [22, 176], [40, 176], { w: 1.3, fill: "O" }) + ladder(44, 184, 18, 4, 6) +
+      frame(170, 176, 18, 124, R, 1.5, 155) + ln(179, 184, 179, 292, 0.5, O) + T([179, 158], [170, 176], [188, 176], { w: 1.3, inset: true }) + ladder(148, 184, 18, 4, 6) +
+      crystal(156, [44, 262], [82, 262], [66, 206], 9, -90, { bounds: [42, 150, 98, 266], cap: 44, hang: 0.3, hmax: 1.8, split: 500 }) + dot(70, 230, 1.5) +
+      crystal(157, [128, 262], [166, 262], [144, 206], 9, -90, { bounds: [112, 150, 168, 266], cap: 44, hang: 0.3, hmax: 1.8, split: 500 }) + ci(140, 230, 1.6, 0.8, R, BG) +
+      knock([[105, 288], [86, 262], [122, 238], [90, 214], [118, 190], [102, 166], [108, 142]], 1.8) + pl([[112, 288], [93, 262], [129, 238], [97, 214], [125, 190], [109, 166], [114, 144]], 0.5, O) + dot(86, 262, 1.4) + dot(122, 238, 1.4) + dot(90, 214, 1.4) + dot(118, 190, 1.4) + dot(102, 166, 1.4) +
+      path("M60 312 A45 26 0 0 1 150 312 Z", 1.5, R, P) + path("M72 312 A33 17 0 0 1 138 312", 0.6, O) + path("M86 312 A19 9 0 0 1 124 312", 1) + spark(105, 300, 3) + cross(96, 298, 2, O) +
+      fringe(64, 146, 138, 158, 6, 10, 40) + chain(44, 176, 66, 206, O) + chain(166, 176, 144, 206, O) +
+      spark(170, 60, 3.6) + spark(40, 72, 3) + cross(190, 140, 3, O) + chain(16, 150, 46, 150) + chain(164, 150, 194, 150) + ln(10, 310, 200, 310, 1.2) },
 
-    { num: "XIX", en: "THE SUN", zh: "太阳", note: "主导画面的放射日轮、四个小日轮（向日葵）、排线墙、一道斜飞的长碎片（旗）", art:
-      box(28, 62, 154, 126, O, 0.6) + box(40, 52, 130, 118, R, 0.8, 4) +
-      burst(105, 112, 34, 44, 61, { max: 46 }) + sector(105, 112, 24, 33, 150, 300) + ci(105, 112, 34, 1.7) + ci(105, 112, 24, 0.8, O) + ci(105, 112, 14, 1) + reticle(105, 112, 3) +
-      [36, 78, 132, 174].map(function (x, i) { return burst(x, 214, 5, 10, 70 + i, { max: 5 }) + ci(x, 214, 5, 1, R, i % 2 ? P : BG) + ci(x, 214, 1.5, 0, R, R) + ln(x, 222, x, 230, 0.7); }).join("") +
-      hpg([[14, 230], [196, 230], [196, 240], [14, 240]], true) + pg([[14, 230], [196, 230], [196, 240], [14, 240]], 1) + [40, 80, 120, 160].map(function (x) { return ln(x, 230, x, 240, 0.6); }).join("") +
-      ln(44, 246, 44, 310, 1.3) + ci(44, 245, 3, 1, R, BG) + shard(196, 270, 44, 266, 16, { h: 1, fill: null }) + shard(170, 290, 46, 284, 6, { c: O, fill: P }) +
-      cluster(16, 168, 298, 8, 3, -150, 30, 18, 32, 7) + spark(24, 50, 3.6) + spark(186, 196, 3.2) + cross(24, 196, 3, O) + ln(10, 310, 200, 310, 1) }
+    { num: "XIX", en: "THE SUN", zh: "太阳", note: "核心象征：占满上半的放射大日轮（直线与薄片交替的光芒）、墙上四朵小日轮向日葵、排线砖墙、左侧旗杆与向右飘出的碎晶长旗", art:
+      frame(28, 56, 154, 124, O, 0.6, 161) + frame(40, 46, 130, 112, R, 0.8, 162) +
+      halo(105, 110, 36, 163, { n: 44, max: 42, min: 8, aw: 2 }) + sector(105, 110, 25, 33, 150, 300, 0) + ci(105, 110, 36, 2) + ci(105, 110, 25, 0.6, O) + ci(105, 110, 15, 1.1) + reticle(105, 110, 3) + arc(105, 110, 44, 330, 420, 1.2) +
+      [38, 80, 130, 172].map(function (x, i) { return halo(x, 212, 3, 170 + i, { n: 10, max: 5, min: 3, aw: 0.01 }) + ci(x, 212, 5.5, 1.1, R, i % 2 ? P : BG) + dot(x, 212, 1.5) + ln(x, 218, x, 232, 0.8) + ln(x, 224, x + 5, 220, 0.6, O); }).join("") +
+      hpg([[14, 232], [196, 232], [196, 244], [14, 244]], 1) + pg([[14, 232], [196, 232], [196, 244], [14, 244]], 1.3) + [32, 60, 88, 116, 144, 172].map(function (x) { return ln(x, 232, x, 244, 0.6); }).join("") + ln(8, 228, 202, 228, 0.5, O) +
+      crystal(164, [44, 248], [44, 284], [100, 258], 12, -5, { bounds: [40, 228, 200, 312], cap: 56, hmax: 1.3, hang: 0.3, split: 500 }) +
+      knock([[44, 236], [44, 312]], 2) + ci(44, 234, 3.2, 1.2, R, BG) + dot(44, 234, 1) +
+      ln(40, 262, 190, 262, 0.5, O, ' stroke-dasharray="2 2.5"') +
+      fringe(40, 170, 180, 165, 5, 6, 26) +
+      spark(24, 50, 3.6) + spark(188, 196, 3.2) + cross(22, 196, 3, O) + chain(14, 300, 40, 300) + ln(10, 310, 200, 310, 1.2) }
   ];
 
   var BACK = (function () {
-    var s = '<svg viewBox="0 0 210 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="牌背"><rect width="210" height="360" fill="' + BG + '"/><g fill="none" stroke-linecap="round" stroke-linejoin="round">' +
+    var id = "b" + (uid++);
+    var s = '<svg viewBox="0 0 210 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="牌背"><defs>' + defs(id) + '</defs><rect width="210" height="360" fill="' + BG + '"/><g fill="none" stroke-linecap="round" stroke-linejoin="round">' +
       '<rect x="8" y="8" width="194" height="344" stroke="' + R + '" stroke-width="0.7"/>';
-    var half = box(52, 54, 106, 96, O, 0.6) + burst(105, 180, 54, 18, 81, { max: 34, a0: 180, a1: 360 }) + shard(105, 24, 105, 120, 9, { h: 1 }) + drop(70, 150, 18, 2.4) + drop(140, 150, 30, 2.4, O) + spark(40, 70, 4) + spark(170, 100, 3);
-    s += half + '<g transform="rotate(180 105 180)">' + half + '</g>' +
-      ci(105, 180, 54, 1.5) + ci(105, 180, 46, 0.6, O) + pg([[105, 140], [140, 200], [70, 200]], 1.2) + pg([[105, 220], [70, 160], [140, 160]], 1.2) +
-      ci(105, 180, 22, 1) + reticle(105, 180, 4) + '</g></svg>';
-    return s.replace(/HATCHR/g, "none").replace(/HATCH/g, P);
+    // 只画上半，再旋转 180° 复制一份，保证严格中心对称
+    var half = frame(40, 40, 100, 100, O, 0.6, 181) + frame(52, 52, 104, 104, R, 0.9, 182) +
+      halo(105, 180, 52, 183, { a0: 180, a1: 360, n: 20, max: 34 }) +
+      crystal(184, [20, 30], [96, 30], [60, 110], 12, 90, { bounds: [10, 10, 112, 176], cap: 60, hang: 0.3 }) +
+      fringe(60, 150, 140, 185, 6, 8, 30) + ladder(148, 60, 40, 4, 7) +
+      spark(30, 150, 4) + spark(176, 60, 3) + cross(188, 112, 3, O) + chain(24, 170, 54, 170) + dot(180, 40, 1.4);
+    s += fill(half + '<g transform="rotate(180 105 180)">' + half + '</g>' +
+      ci(105, 180, 52, 1.8) + ci(105, 180, 44, 0.6, O) +
+      hpg([[93.3, 160], [116.7, 160], [128.3, 180], [116.7, 200], [93.3, 200], [81.7, 180]], 0) + pg([[105, 140], [140, 200], [70, 200]], 1.3) + pg([[105, 220], [70, 160], [140, 160]], 1.3) +
+      ci(105, 180, 12, 1.1, R, BG) + reticle(105, 180, 4), id) + '</g></svg>';
+    return s;
   })();
 
   var html = CARDS.map(function (c) {
     return '<figure><button class="cardbtn" type="button" aria-pressed="false" aria-label="' + c.zh + '，点击查看逆位">' + card(c.num, c.en, c.zh, c.art) + '</button>' +
       '<figcaption><b>' + c.zh + '</b> · ' + c.note + '</figcaption></figure>';
   }).join("") +
-    '<figure><button class="cardbtn" type="button" aria-pressed="false" aria-label="牌背，点击旋转">' + BACK + '</button><figcaption><b>牌背</b> · 上下两半旋转复制，中心对称</figcaption></figure>';
+    '<figure><button class="cardbtn" type="button" aria-pressed="false" aria-label="牌背，点击旋转">' + BACK + '</button><figcaption><b>牌背</b> · 上半碎晶、放射、方框与垂珠旋转复制到下半，严格中心对称</figcaption></figure>';
   document.getElementById("grid").innerHTML = html;
   document.querySelectorAll(".cardbtn").forEach(function (b) {
     b.addEventListener("click", function () { b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") === "true" ? "false" : "true"); });
