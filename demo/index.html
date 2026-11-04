@@ -1,0 +1,554 @@
+<title>墨星占卜台</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@500;700;900&display=swap">
+<style>
+/* 布局：单栏移动优先，顶部品牌 + 两个功能页签；塔罗是“牌桌”，八字是“命盘纸” */
+:root {
+  --bg: #eef0f5;
+  --surface: #ffffff;
+  --ink: #1b1a33;
+  --muted: #5d5f7a;
+  --line: #d6d8e4;
+  --brass: #9a7426;
+  --seal: #b23a2a;
+  --felt: #22204a;
+  --felt-ink: #f1ead8;
+  --card-back: #2c2960;
+  --wood: #4c8a4a; --fire: #c4482f; --earth: #a77b2c; --metal: #8a8fa3; --water: #2f5f9e;
+  --font-display: "Noto Serif SC", "Songti SC", "STSong", serif;
+  --font-body: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121127; --surface: #1c1b38; --ink: #ece8f6; --muted: #a4a3c2; --line: #34325a;
+    --brass: #d8b46a; --seal: #e0614c; --felt: #1a1840; --felt-ink: #f1ead8; --card-back: #34307a;
+    --wood: #74b46f; --fire: #ec6f55; --earth: #d2a04c; --metal: #b3b7c9; --water: #6b9be0;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121127; --surface: #1c1b38; --ink: #ece8f6; --muted: #a4a3c2; --line: #34325a;
+  --brass: #d8b46a; --seal: #e0614c; --felt: #1a1840; --felt-ink: #f1ead8; --card-back: #34307a;
+  --wood: #74b46f; --fire: #ec6f55; --earth: #d2a04c; --metal: #b3b7c9; --water: #6b9be0;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.7; }
+.wrap { max-width: 760px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 48px; display: grid; gap: 20px; }
+header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand .seal { width: 34px; height: 34px; border: 2px solid var(--seal); color: var(--seal); display: grid; place-items: center; font-family: var(--font-display); font-weight: 900; font-size: 18px; border-radius: 4px; }
+.brand h1 { margin: 0; font-family: var(--font-display); font-size: 22px; letter-spacing: .08em; }
+.brand small { display: block; color: var(--muted); font-size: 12px; letter-spacing: .04em; }
+nav { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px; }
+nav a { text-decoration: none; color: var(--muted); padding: 6px 16px; border-radius: 999px; font-weight: 500; }
+nav a[aria-current="page"] { background: var(--ink); color: var(--bg); }
+nav a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, .chip:focus-visible, .fan .back:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+.notice { font-size: 12.5px; color: var(--muted); border-left: 3px solid var(--brass); padding: 4px 0 4px 10px; }
+h2 { font-family: var(--font-display); font-size: 20px; margin: 0; text-wrap: balance; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: grid; gap: 14px; min-width: 0; }
+label { font-size: 13px; color: var(--muted); display: grid; gap: 6px; }
+input, select { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 9px 12px; width: 100%; min-width: 0; }
+.row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1px solid var(--line); background: transparent; color: var(--ink); font: inherit; font-size: 14px; padding: 5px 14px; border-radius: 999px; cursor: pointer; }
+.chip[aria-pressed="true"] { border-color: var(--brass); color: var(--brass); font-weight: 700; }
+.btn { font: inherit; font-weight: 700; border: 0; border-radius: 10px; padding: 11px 22px; background: var(--ink); color: var(--bg); cursor: pointer; letter-spacing: .06em; }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); font-weight: 500; }
+.btn:disabled { opacity: .45; cursor: default; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.hint { font-size: 13px; color: var(--muted); }
+
+/* 塔罗牌桌 */
+.table { background: radial-gradient(120% 90% at 50% 0%, color-mix(in srgb, var(--felt) 80%, var(--brass) 20%), var(--felt) 70%); color: var(--felt-ink); border-radius: 14px; padding: 18px 14px 20px; display: grid; gap: 16px; overflow: hidden; min-width: 0; }
+.table .hint { color: color-mix(in srgb, var(--felt-ink) 70%, transparent); text-align: center; }
+.slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; justify-items: center; }
+.slot { display: grid; gap: 8px; justify-items: center; width: 100%; min-width: 0; }
+.slot > div:not(.tag) { width: 100%; display: grid; justify-items: center; }
+.slot .pos { font-family: var(--font-display); font-size: 13px; letter-spacing: .2em; color: var(--brass); }
+.card { width: min(100%, 120px); aspect-ratio: 7 / 12; perspective: 800px; max-width: 100%; }
+.card .inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .9s cubic-bezier(.2,.7,.2,1); }
+.card.flipped .inner { transform: rotateY(180deg); }
+.card .face, .card .backside { position: absolute; inset: 0; border-radius: 9px; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.backside, .back { background:
+  repeating-linear-gradient(45deg, transparent 0 7px, color-mix(in srgb, var(--brass) 28%, transparent) 7px 8px),
+  repeating-linear-gradient(-45deg, transparent 0 7px, color-mix(in srgb, var(--brass) 28%, transparent) 7px 8px),
+  var(--card-back);
+  border: 2px solid color-mix(in srgb, var(--brass) 70%, transparent); box-shadow: inset 0 0 0 4px var(--card-back), inset 0 0 0 5px color-mix(in srgb, var(--brass) 60%, transparent); }
+.slot .empty { width: min(100%, 120px); aspect-ratio: 7 / 12; border: 1.5px dashed color-mix(in srgb, var(--felt-ink) 35%, transparent); border-radius: 9px; }
+.face { transform: rotateY(180deg); background: #f4eedf; color: #2a2440; border: 2px solid #b8954b; display: grid; grid-template-rows: auto 1fr auto; justify-items: center; padding: 8px 4px; font-family: var(--font-display); overflow: hidden; }
+.face .num { font-size: 12px; letter-spacing: .1em; color: #7d6330; }
+.face .mark { align-self: center; width: 54%; aspect-ratio: 1; border: 2.5px solid #b23a2a; color: #b23a2a; display: grid; place-items: center; font-size: clamp(20px, 7vw, 34px); font-weight: 900; border-radius: 6px; background: radial-gradient(circle, #fbf6ea 55%, #efe3c6); }
+.face .nm { font-size: clamp(11px, 3.2vw, 14px); font-weight: 700; white-space: nowrap; }
+.face > span:last-child { text-align: center; max-width: 100%; line-height: 1.3; }
+.face .en { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-body); font-size: 8.5px; color: #7d6330; letter-spacing: .06em; }
+.card.rev .face > * { transform: rotate(180deg); }
+.slot .tag { font-size: 12px; line-height: 1.4; text-align: center; min-height: 1.4em; }
+.deck-zone { position: relative; height: 185px; display: grid; place-items: center; }
+.stack { position: relative; width: 80px; height: 137px; }
+.stack .back { position: absolute; inset: 0; border-radius: 8px; }
+.fan { position: relative; height: 170px; width: 100%; }
+.fan .back { position: absolute; bottom: 10px; width: 62px; height: 106px; border-radius: 7px; cursor: pointer; transform-origin: 50% 100%; transition: transform .35s ease, opacity .35s ease; border-width: 1.5px; }
+.fan .back:hover { filter: brightness(1.25); }
+.fan .back.taken { opacity: 0; pointer-events: none; }
+
+.reading { display: grid; gap: 12px; }
+.reading h3 { margin: 0; font-family: var(--font-display); font-size: 17px; }
+.reading p { margin: 0; max-width: 65ch; }
+.reading .em { color: var(--brass); font-weight: 700; }
+.cursor::after { content: "▍"; color: var(--brass); animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* 八字命盘 */
+.solar { font-size: 13.5px; color: var(--muted); background: var(--bg); border-radius: 8px; padding: 10px 12px; font-variant-numeric: tabular-nums; }
+.pillars-wrap { overflow-x: auto; }
+table.pillars { border-collapse: collapse; width: 100%; min-width: 0; table-layout: fixed; text-align: center; font-variant-numeric: tabular-nums; }
+.pillars th { font-size: 12px; color: var(--muted); font-weight: 500; padding: 6px 4px; border-bottom: 1px solid var(--line); }
+.pillars td { padding: 6px 2px; border-bottom: 1px solid var(--line); font-size: 12.5px; }
+.pillars tr > :first-child { width: 2.8em; }
+.pillars .hint { font-size: 11.5px; }
+.pillars td.big { font-family: var(--font-display); font-size: 26px; font-weight: 900; line-height: 1.2; }
+.pillars .rowh { text-align: left; color: var(--muted); font-size: 12px; white-space: nowrap; }
+.pillars .day { background: color-mix(in srgb, var(--brass) 10%, transparent); }
+.wx-木 { color: var(--wood); } .wx-火 { color: var(--fire); } .wx-土 { color: var(--earth); } .wx-金 { color: var(--metal); } .wx-水 { color: var(--water); }
+.bars { display: grid; gap: 8px; }
+.bar { display: grid; grid-template-columns: 2.5em 1fr 3.2em; align-items: center; gap: 10px; font-size: 13px; font-variant-numeric: tabular-nums; }
+.bar .track { height: 10px; background: var(--bg); border-radius: 5px; overflow: hidden; }
+.bar .fill { height: 100%; border-radius: 5px; }
+.yun { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+.yun div { flex: 0 0 auto; border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; text-align: center; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.yun div b { display: block; font-family: var(--font-display); font-size: 18px; color: var(--ink); }
+.yun div.now { border-color: var(--brass); background: color-mix(in srgb, var(--brass) 12%, transparent); }
+details summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+footer { font-size: 12px; color: var(--muted); text-align: center; }
+@media (prefers-reduced-motion: reduce) { .card .inner, .fan .back { transition: none; } .cursor::after { animation: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="seal" aria-hidden="true">墨</div>
+      <div><h1>墨星占卜台</h1><small>塔罗 · 八字 · 测试版 Demo</small></div>
+    </div>
+    <nav aria-label="功能">
+      <a href="#tarot" id="tab-tarot">塔罗占卜</a>
+      <a href="#bazi" id="tab-bazi">八字命盘</a>
+    </nav>
+  </header>
+  <p class="notice">这是产品演示版。排盘为真实算法（lunar-javascript），解读暂由规则模板拼接，正式版将改为 AI 个性化生成。内容仅供娱乐参考。</p>
+
+  <!-- 塔罗 -->
+  <section id="view-tarot" class="view" aria-labelledby="tarot-h">
+    <div class="panel">
+      <h2 id="tarot-h">三张牌 · 过去 现在 未来</h2>
+      <label for="q">你想问的事
+        <input id="q" maxlength="60" value="最近和他有点冷淡，接下来会怎样？">
+      </label>
+      <div class="chips" role="group" aria-label="问题类型" id="scenes">
+        <button class="chip" data-scene="love" aria-pressed="true">感情</button>
+        <button class="chip" data-scene="work" aria-pressed="false">事业学业</button>
+        <button class="chip" data-scene="money" aria-pressed="false">财运</button>
+        <button class="chip" data-scene="self" aria-pressed="false">自我成长</button>
+      </div>
+      <div class="table" id="table">
+        <div class="slots" id="slots"></div>
+        <div class="deck-zone" id="deckzone">
+          <div class="stack" id="stack"></div>
+          <div class="fan" id="fan" hidden></div>
+        </div>
+        <p class="hint" id="thint">想着你的问题，点“洗牌”，再从牌堆里凭直觉选三张。</p>
+      </div>
+      <div class="actions">
+        <button class="btn" id="shuffle">洗牌</button>
+        <button class="btn ghost" id="reset" hidden>重新开始</button>
+        <button class="btn ghost" id="skip" hidden>直接显示全文</button>
+      </div>
+    </div>
+    <div class="panel reading" id="reading" hidden aria-live="polite"></div>
+  </section>
+
+  <!-- 八字 -->
+  <section id="view-bazi" class="view" aria-labelledby="bazi-h" hidden>
+    <form class="panel" id="bform">
+      <h2 id="bazi-h">八字命盘</h2>
+      <div class="row">
+        <label for="bdate">出生日期（公历）<input type="date" id="bdate" value="1998-08-16" min="1901-01-01" max="2099-12-31" required></label>
+        <label for="btime">出生时间<input type="time" id="btime" value="09:30" required></label>
+        <label for="bgender">性别<select id="bgender"><option value="0">女</option><option value="1">男</option></select></label>
+        <label for="bcity">出生城市<select id="bcity"></select></label>
+      </div>
+      <div class="row">
+        <label for="bsolar">时间校正<select id="bsolar"><option value="1">真太阳时（推荐）</option><option value="0">北京时间</option></select></label>
+        <label for="bsect">子时流派<select id="bsect"><option value="1">23:00 换日</option><option value="2">00:00 换日</option></select></label>
+      </div>
+      <div class="actions"><button class="btn" type="submit">排盘</button><span class="hint">示例生辰已填好，可直接修改。</span></div>
+    </form>
+    <div id="bout" class="reading" style="display:grid;gap:20px;margin-top:20px"></div>
+  </section>
+
+  <footer>Demo · 牌面为原创印章式设计，未使用受版权保护的牌面图像</footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.7.7/lunar.js"></script>
+<script>
+(function () {
+  "use strict";
+  var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function rnd(n) { var a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n; }
+  function pick(arr) { return arr[rnd(arr.length)]; }
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+  /* ---------- 路由 ---------- */
+  function route() {
+    var v = location.hash === "#bazi" ? "bazi" : "tarot";
+    $("view-tarot").hidden = v !== "tarot";
+    $("view-bazi").hidden = v !== "bazi";
+    $("tab-tarot").setAttribute("aria-current", v === "tarot" ? "page" : "false");
+    $("tab-bazi").setAttribute("aria-current", v === "bazi" ? "page" : "false");
+  }
+  window.addEventListener("hashchange", route); route();
+
+  /* ---------- 塔罗数据：22 张大阿尔克纳 ---------- */
+  // t: 正位基调 1 顺 0 中 -1 有挑战；tr: 逆位基调
+  var CARDS = [
+    ["0", "愚者", "The Fool", "行", "白衣青年站在悬崖边，手里拈着一朵白玫瑰，小狗在脚边跳", "新的开始、轻装上阵、敢于尝试", "冲动、准备不足、逃避责任", "先迈出一小步，不用等一切都想清楚", "给自己定个底线再出发，别光凭一时兴起", 1, -1],
+    ["I", "魔术师", "The Magician", "创", "一手举杖指天、一手指地，桌上摆着权杖、圣杯、宝剑和星币", "资源都在手里、行动力、表达力", "有想法却用不上力、说得多做得少", "把手上现成的资源列出来，挑一个今天就用起来", "少承诺，先做出一件小成果", 1, -1],
+    ["II", "女祭司", "The High Priestess", "静", "她坐在黑白两根柱子之间，膝上半卷经卷没有完全打开", "直觉、沉淀、答案还没到公开的时候", "忽视内心声音、信息不透明", "先别急着要答案，留意自己第一反应的那个念头", "把憋着的话写下来，看清自己真正在意什么", 0, -1],
+    ["III", "皇后", "The Empress", "丰", "她坐在麦田与树林间，身边的盾牌上刻着金星符号", "滋养、丰盛、被照顾也照顾别人", "过度付出、依赖、自我消耗", "对自己好一点，吃好睡好本身就是转运", "付出之前先问问自己是不是心甘情愿", 1, 0],
+    ["IV", "皇帝", "The Emperor", "序", "他坐在刻着公羊头的石座上，背后是光秃的山", "秩序、掌控、定规则的人", "控制欲、僵硬、不肯让步", "给这件事定个明确的规则或期限", "试着放手一点，不是每件事都要你来扛", 1, -1],
+    ["V", "教皇", "The Hierophant", "礼", "他举手祝福，脚前跪着两位信徒，地上交叉放着两把钥匙", "传统、指引、找前辈或正规渠道", "墨守成规、被外界标准绑住", "找个过来人聊一聊，会少走弯路", "别人的标准未必适合你，可以有自己的答案", 0, 0],
+    ["VI", "恋人", "The Lovers", "择", "天使在上方张开双臂，一男一女站在两棵树前", "心意相通、重要的选择、价值观一致", "犹豫不决、关系失衡、选择背离本心", "做决定时问自己：哪个选项更像我", "把真实的期待说出来，比互相猜更省力", 1, -1],
+    ["VII", "战车", "The Chariot", "进", "驾车人站得笔直，车前一黑一白两只斯芬克斯各朝一边", "意志、推进、克服阻力", "方向失控、内心拉扯、硬冲", "认准方向就往前推，节奏由你掌握", "先停下来对齐方向，再加速", 1, -1],
+    ["VIII", "力量", "Strength", "柔", "白衣女子轻轻合上狮子的嘴，头顶浮着无限符号", "温柔的力量、耐心、以柔克刚", "自我怀疑、情绪压不住", "用耐心代替硬碰硬，对方会软下来", "先照顾好自己的情绪，再处理事情", 1, 0],
+    ["IX", "隐士", "The Hermit", "省", "老人独自站在雪山顶，提着一盏装着六芒星的灯", "独处、反思、向内找答案", "孤立、封闭、钻牛角尖", "给自己留一段安静的时间，答案会自己浮上来", "别一个人闷着，找一个信得过的人说说", 0, -1],
+    ["X", "命运之轮", "Wheel of Fortune", "转", "巨轮在云间转动，四个角各有一只读着书的生物", "转机、周期、顺势而为", "时机未到、反复、被动等待", "机会来了就接住，别想太多", "这阵子不顺是周期，不是你的问题", 1, -1],
+    ["XI", "正义", "Justice", "衡", "她端坐正中，一手持剑、一手提着天平", "公平、因果、理性判断", "失衡、偏见、回避后果", "把事实和情绪分开，按事实做判断", "回头看看有没有哪一笔账没算清", 0, -1],
+    ["XII", "倒吊人", "The Hanged Man", "悬", "他倒挂在 T 形树上，神情却很平静，头上有一圈光", "暂停、换个角度、以退为进", "白白牺牲、拖延、困在原地", "换个角度看，你以为的损失可能是转机", "别再无谓地等了，该放下就放下", 0, -1],
+    ["XIII", "死神", "Death", "终", "骷髅骑士骑着白马举起黑旗，远处两座塔之间正升起太阳", "结束与重生、旧的一页翻过去", "抗拒改变、拖着不肯结束", "跟旧的模式好好道别，新的才进得来", "改变已经在发生，越抗拒越累", 0, -1],
+    ["XIV", "节制", "Temperance", "和", "天使一脚踩在水里一脚踏在岸上，在两只杯子之间来回倒水", "平衡、调和、慢慢来", "失衡、急躁、走极端", "找到中间的那个点，不必非黑即白", "最近节奏太乱，先把作息调回来", 1, -1],
+    ["XV", "恶魔", "The Devil", "缚", "一对男女被拴在台座上，可脖子上的锁链其实松松垮垮", "执念、欲望、被某种东西绑住", "开始挣脱、看清束缚", "问问自己：真放不下，还是不敢放", "你比自己想的更自由，链子是松的", -1, 1],
+    ["XVI", "高塔", "The Tower", "破", "闪电劈中塔顶，王冠被掀飞，两个人从高处坠下", "突变、打破假象、推倒重来", "躲过一劫、拖延必然的改变", "该来的变化挡不住，先保护好最重要的东西", "趁还来得及，主动调整比被动崩塌好", -1, 0],
+    ["XVII", "星星", "The Star", "愿", "女子跪在水边两手倒水，头顶一颗大星和七颗小星", "希望、疗愈、慢慢变好", "失望、信心不足", "保持期待，这件事在往好的方向走", "先把对自己的信心找回来", 1, 0],
+    ["XVIII", "月亮", "The Moon", "惑", "月下一只狗和一只狼对着月亮叫，一只龙虾正从水里爬出来", "不确定、想象、情绪起伏", "迷雾散去、真相浮现", "现在看到的未必是全貌，别急着下结论", "之前想不通的地方，很快会有答案", -1, 1],
+    ["XIX", "太阳", "The Sun", "明", "孩子骑着白马张开双臂，背后是一排向日葵", "明朗、成功、坦诚相待", "暂时被遮住的阳光、过度乐观", "大方去做，结果会比你预想的好", "好事有，只是来得慢一点", 1, 0],
+    ["XX", "审判", "Judgement", "醒", "天使吹响号角，人们从棺中站起，张开双臂迎接", "觉醒、复苏、再给一次机会", "自我否定、错过召唤", "该给自己或对方一次重新开始的机会", "别因为一次失败就全盘否定自己", 1, -1],
+    ["XXI", "世界", "The World", "圆", "舞者在月桂花环里起舞，四个角各有一种生物", "圆满、完成、一个阶段的终点", "差最后一步、收尾拖沓", "这件事接近圆满，把最后一步走好", "离完成只差一点，别在最后松劲", 1, 0]
+  ].map(function (c) { return { num: c[0], name: c[1], en: c[2], mark: c[3], img: c[4], up: c[5], rev: c[6], act: c[7], actR: c[8], t: c[9], tr: c[10] }; });
+
+  var SCENE = {
+    love: { word: "这段关系", good: ["你们之间的气氛会慢慢回暖", "对方其实也在等一个台阶"], mid: ["关系在一个需要磨合的阶段", "两个人的节奏暂时没对上"], bad: ["有些心结没解开，冷淡只是表面", "这段关系需要一次真正的沟通"] },
+    work: { word: "这件事", good: ["进展会比你担心的顺利", "努力正在被看见"], mid: ["事情在推进，但需要耐心", "现在是打基础的时候"], bad: ["眼前有阻力，硬推会更累", "方向可能需要调整"] },
+    money: { word: "财务这块", good: ["收入有向上的机会", "之前的投入会慢慢回本"], mid: ["钱的进出大体平稳", "适合规划，不适合冒进"], bad: ["近期容易有计划外支出", "冲动消费和跟风投资要当心"] },
+    self: { word: "你现在的状态", good: ["你正在变成更喜欢的自己", "内心的力量在恢复"], mid: ["你在一个过渡期，有点迷茫很正常", "旧的习惯和新的想法在拉扯"], bad: ["你最近消耗太多，需要先回血", "有些情绪一直被你压着"] }
+  };
+  var POS = ["过去", "现在", "未来"];
+
+  var scene = "love", picks = [], deckOrder = [], phase = "idle", typing = null;
+
+  document.querySelectorAll("#scenes .chip").forEach(function (b) {
+    b.addEventListener("click", function () {
+      scene = b.dataset.scene;
+      document.querySelectorAll("#scenes .chip").forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+    });
+  });
+
+  function renderSlots() {
+    $("slots").innerHTML = POS.map(function (p, i) {
+      return '<div class="slot"><span class="pos">' + p + '</span><div id="slot' + i + '"><div class="empty"></div></div><div class="tag" id="tag' + i + '"></div></div>';
+    }).join("");
+  }
+  function renderStack() {
+    var h = "";
+    for (var i = 0; i < 8; i++) h += '<div class="back" style="transform:translate(' + (i * 0.6) + 'px,' + (-i * 0.8) + 'px)"></div>';
+    $("stack").innerHTML = h;
+  }
+  renderSlots(); renderStack();
+
+  function shuffleDeck() {
+    deckOrder = CARDS.map(function (_, i) { return i; });
+    for (var i = deckOrder.length - 1; i > 0; i--) { var j = rnd(i + 1); var t = deckOrder[i]; deckOrder[i] = deckOrder[j]; deckOrder[j] = t; }
+  }
+
+  $("shuffle").addEventListener("click", function () {
+    if (phase !== "idle") return;
+    phase = "shuffling";
+    $("shuffle").disabled = true;
+    $("thint").textContent = "洗牌中，在心里默念你的问题……";
+    shuffleDeck();
+    var backs = $("stack").children, anims = [];
+    if (!reduced) {
+      for (var i = 0; i < backs.length; i++) {
+        var dx = (i % 2 ? 1 : -1) * (30 + rnd(40)), r = (i % 2 ? 1 : -1) * (6 + rnd(14));
+        anims.push(backs[i].animate([
+          { transform: backs[i].style.transform },
+          { transform: "translate(" + dx + "px," + (-10 - rnd(20)) + "px) rotate(" + r + "deg)", offset: 0.25 },
+          { transform: backs[i].style.transform, offset: 0.5 },
+          { transform: "translate(" + (-dx) + "px," + (-rnd(16)) + "px) rotate(" + (-r) + "deg)", offset: 0.75 },
+          { transform: backs[i].style.transform }
+        ], { duration: 1400, delay: i * 40, easing: "ease-in-out" }));
+      }
+    }
+    setTimeout(showFan, reduced ? 0 : 1750);
+  });
+
+  function showFan() {
+    phase = "picking";
+    $("stack").hidden = true;
+    var fan = $("fan"); fan.hidden = false; fan.innerHTML = "";
+    var w = fan.clientWidth, cw = 62, n = deckOrder.length;
+    var step = Math.min(26, (w - cw - 48) / (n - 1));
+    var total = step * (n - 1) + cw, left0 = (w - total) / 2;
+    deckOrder.forEach(function (ci, k) {
+      var b = document.createElement("button");
+      b.className = "back"; b.type = "button";
+      b.setAttribute("aria-label", "第 " + (k + 1) + " 张牌");
+      var off = k - (n - 1) / 2, rot = off * 1.6;
+      b.style.left = (left0 + k * step) + "px";
+      var final = "translateY(" + (off * off * 0.28).toFixed(1) + "px) rotate(" + rot.toFixed(1) + "deg)";
+      b.style.transform = reduced ? final : "translateY(40px) rotate(0deg)";
+      b.style.opacity = reduced ? "1" : "0";
+      fan.appendChild(b);
+      if (!reduced) setTimeout(function () { b.style.opacity = "1"; b.style.transform = final; }, 30 + k * 28);
+      b.addEventListener("mouseenter", function () { if (!b.classList.contains("taken")) b.style.transform = final + " translateY(-12px)"; });
+      b.addEventListener("mouseleave", function () { if (!b.classList.contains("taken")) b.style.transform = final; });
+      b.addEventListener("click", function () { takeCard(b, ci, final); });
+    });
+    $("thint").textContent = "凭直觉选第 1 张（代表过去）";
+  }
+
+  function takeCard(btn, ci, final) {
+    if (phase !== "picking" || btn.classList.contains("taken")) return;
+    var idx = picks.length;
+    var reversed = rnd(100) < 30;
+    picks.push({ c: CARDS[ci], rev: reversed });
+    btn.style.transform = final + " translateY(-60px)";
+    btn.classList.add("taken");
+    var c = CARDS[ci];
+    $("slot" + idx).innerHTML =
+      '<div class="card' + (reversed ? " rev" : "") + '" id="card' + idx + '"><div class="inner"><div class="backside"></div>' +
+      '<div class="face"><span class="num">' + c.num + '</span><span class="mark">' + c.mark + '</span><span><span class="nm">' + c.name + '</span><span class="en">' + c.en + '</span></span></div></div></div>';
+    setTimeout(function () {
+      $("card" + idx).classList.add("flipped");
+      $("tag" + idx).textContent = c.name + (reversed ? "（逆位）" : "（正位）");
+    }, reduced ? 0 : 450);
+    if (picks.length < 3) {
+      $("thint").textContent = "再选第 " + (picks.length + 1) + " 张（代表" + POS[picks.length] + "）";
+    } else {
+      phase = "reading";
+      $("thint").textContent = "三张牌已就位，正在解读……";
+      setTimeout(function () { $("fan").hidden = true; $("deckzone").style.height = "0"; startReading(); }, reduced ? 0 : 1300);
+    }
+  }
+
+  function tone(p) { return p.rev ? p.c.tr : p.c.t; }
+  function meaning(p) { return p.rev ? p.c.rev : p.c.up; }
+  function advice(p) { return p.rev ? p.c.actR : p.c.act; }
+  function firstPart(s) { return s.split("、")[0]; }
+
+  function compose() {
+    var q = $("q").value.trim() || "接下来会怎样";
+    var S = SCENE[scene];
+    var past = picks[0], now = picks[1], fut = picks[2];
+    var ft = tone(fut), sum = tone(past) + tone(now) + tone(fut);
+    var verdict = ft > 0 ? pick(S.good) : ft < 0 ? pick(S.bad) : pick(S.mid);
+    var paras = [];
+    var openers = [
+      function () { return "先说结论：" + verdict + "。三张牌连起来看，" + (ft < 0 && sum >= 0 ? "前两张底子不差，难点集中在后面。" : sum > 0 ? "整体是往上走的。" : sum < 0 ? "这一段需要你多花点心思。" : "好坏参半，关键在你接下来的选择。"); },
+      function () { return "你问「" + q + "」。我先看了最后一张" + fut.c.name + "，" + verdict + "。"; },
+      function () { return "翻开第一张的时候，画面是" + past.c.img + "。这张牌放在过去的位置上，已经把来龙去脉说了一半。"; },
+      function () { return "这三张牌里，" + now.c.name + "最值得注意，它落在「现在」，" + (now.rev ? "而且是逆位。" : "而且是正位。") + "我们从它说起会比较清楚。"; }
+    ];
+    var oi = rnd(openers.length);
+    paras.push(openers[oi]());
+
+    var pastLines = [
+      "过去这张是" + past.c.name + (past.rev ? "逆位" : "") + "，说的是「" + firstPart(meaning(past)) + "」。" + S.word + "走到今天，跟这一点脱不开关系。",
+      "往回看，" + past.c.name + (past.rev ? "倒着出现" : "出现在过去的位置") + "，意思是" + meaning(past) + "。这是之前埋下的底色。"
+    ];
+    var nowLines = [
+      "现在是" + now.c.name + (now.rev ? "逆位" : "") + "。牌面上" + now.c.img + "，对应到你身上，就是" + meaning(now) + "。",
+      "眼下的局面落在" + now.c.name + "：" + meaning(now) + "。" + (tone(now) < 0 ? "这股劲有点卡住，你可能也感觉到了。" : "这股劲是顺的，可以借力。")
+    ];
+    var futLines = [
+      "至于接下来，" + fut.c.name + (fut.rev ? "逆位" : "") + "给的提示是「" + meaning(fut) + "」。" + (ft > 0 ? "这是张让人放心的牌。" : ft < 0 ? "它不是坏结局，而是在提醒你要换个做法。" : "走向还没定，你的态度会决定它偏向哪边。"),
+      "未来这一位是" + fut.c.name + "。" + (fut.rev ? "逆位的它" : "它") + "说的是" + meaning(fut) + "。" + (ft > 0 ? "往好的方向走的可能性更大。" : ft < 0 ? "接下来会有一点考验，但提前知道就能提前准备。" : "最后落在哪里，要看你怎么选。")
+    ];
+    var body = oi === 3 ? [pick(nowLines), pick(pastLines), pick(futLines)] : oi === 2 ? [pick(nowLines), pick(futLines)] : [pick(pastLines), pick(nowLines), pick(futLines)];
+    if (oi === 2) body.unshift("它是" + past.c.name + (past.rev ? "逆位" : "") + "，" + meaning(past) + "。");
+    paras = paras.concat(body);
+
+    var key = ft < 0 ? fut : now;
+    var closers = [
+      "如果只记一句话：" + advice(key) + "。",
+      "具体可以怎么做？" + advice(now) + "；再往后，" + advice(fut) + "。",
+      "我的建议是，" + advice(key) + "。" + (scene === "love" ? "感情里，主动一点通常不会错。" : scene === "money" ? "钱的事，宁可慢一点。" : "")
+    ];
+    paras.push(pick(closers));
+    return paras;
+  }
+
+  function startReading() {
+    var paras = compose();
+    var box = $("reading"); box.hidden = false;
+    box.innerHTML = '<h3>解读</h3>' + paras.map(function (_, i) { return '<p id="rp' + i + '"></p>'; }).join("") +
+      '<p class="hint">Demo 解读由模板随机组合，每次结构都会不同；正式版由 AI 结合你的问题生成，并可追问。</p>';
+    $("reset").hidden = false; $("skip").hidden = reduced;
+    box.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+    if (reduced) { paras.forEach(function (t, i) { $("rp" + i).textContent = t; }); done(); return; }
+    var pi = 0, ci = 0;
+    function tick() {
+      if (pi >= paras.length) { done(); return; }
+      var el = $("rp" + pi); el.classList.add("cursor");
+      ci++;
+      el.textContent = paras[pi].slice(0, ci);
+      var ch = paras[pi][ci - 1], d = 28 + rnd(36);
+      if ("，、".indexOf(ch) >= 0) d += 120; if ("。？！：".indexOf(ch) >= 0) d += 260;
+      if (ci >= paras[pi].length) { el.classList.remove("cursor"); pi++; ci = 0; d = 500 + rnd(300); }
+      typing = setTimeout(tick, d);
+    }
+    tick();
+    $("skip").onclick = function () { clearTimeout(typing); paras.forEach(function (t, i) { $("rp" + i).textContent = t; $("rp" + i).classList.remove("cursor"); }); done(); };
+    function done() { $("skip").hidden = true; $("thint").textContent = "解读完成。同一个问题不宜反复占问，可以过一段时间再看。"; }
+  }
+
+  $("reset").addEventListener("click", function () {
+    clearTimeout(typing); picks = []; phase = "idle";
+    renderSlots(); $("stack").hidden = false; $("fan").hidden = true; $("deckzone").style.height = "";
+    $("reading").hidden = true; $("reset").hidden = true; $("skip").hidden = true; $("shuffle").disabled = false;
+    $("thint").textContent = "想着你的问题，点“洗牌”，再从牌堆里凭直觉选三张。";
+  });
+
+  /* ---------- 八字 ---------- */
+  var CITIES = [["北京", 116.41], ["上海", 121.47], ["广州", 113.26], ["深圳", 114.06], ["杭州", 120.16], ["南京", 118.80], ["武汉", 114.31], ["长沙", 112.94], ["成都", 104.07], ["重庆", 106.55], ["西安", 108.94], ["郑州", 113.63], ["沈阳", 123.43], ["哈尔滨", 126.53], ["昆明", 102.83], ["兰州", 103.83], ["拉萨", 91.13], ["乌鲁木齐", 87.62]];
+  $("bcity").innerHTML = CITIES.map(function (c, i) { return '<option value="' + i + '"' + (c[0] === "成都" ? " selected" : "") + ">" + c[0] + " " + c[1].toFixed(1) + "°E</option>"; }).join("");
+
+  var GAN_WX = { 甲: "木", 乙: "木", 丙: "火", 丁: "火", 戊: "土", 己: "土", 庚: "金", 辛: "金", 壬: "水", 癸: "水" };
+  var GAN_YANG = { 甲: 1, 丙: 1, 戊: 1, 庚: 1, 壬: 1, 乙: 0, 丁: 0, 己: 0, 辛: 0, 癸: 0 };
+  var ZHI_WX = { 子: "水", 丑: "土", 寅: "木", 卯: "木", 辰: "土", 巳: "火", 午: "火", 未: "土", 申: "金", 酉: "金", 戌: "土", 亥: "水" };
+  var ORDER = ["木", "火", "土", "金", "水"];
+  function gen(e) { return ORDER[(ORDER.indexOf(e) + 1) % 5]; }      // e 生
+  function ctrl(e) { return ORDER[(ORDER.indexOf(e) + 2) % 5]; }     // e 克
+  function shishen(dg, g) {
+    var a = GAN_WX[dg], b = GAN_WX[g], same = GAN_YANG[dg] === GAN_YANG[g];
+    if (a === b) return same ? "比肩" : "劫财";
+    if (gen(a) === b) return same ? "食神" : "伤官";
+    if (ctrl(a) === b) return same ? "偏财" : "正财";
+    if (ctrl(b) === a) return same ? "七杀" : "正官";
+    return same ? "偏印" : "正印";
+  }
+  var DM = {
+    甲: "像一棵往上长的大树：有主见、讲原则，认定的方向很难被人拉回来。优点是靠得住，短板是不太会转弯，吃软不吃硬。",
+    乙: "像花草藤蔓：柔韧，会察言观色，适应力很强，在哪儿都能找到自己的位置。只是容易想太多，委屈了也不说。",
+    丙: "像正午的太阳：热情外放，愿意照顾身边的人，走到哪里都有存在感。情绪来得快去得也快，事后常常自己先笑了。",
+    丁: "像一盏灯火：细腻、温暖、专注，适合把一件事钻深钻透。对亲近的人格外敏感，容易在心里反复琢磨一句话。",
+    戊: "像一座山：稳重可靠，关键时刻能扛事，别人愿意把后背交给你。缺点是慢热，认定的事也有点固执。",
+    己: "像一片田地：包容、务实，会经营也会照顾人，是身边人眼里的“靠谱担当”。就是操心太多，常常顾不上自己。",
+    庚: "像一把刀：果断、讲义气、执行力强，最受不了拖泥带水。说话直接，好心有时被误会成强势。",
+    辛: "像一件首饰：讲究品质，审美好，自尊心强，做事追求体面。对自己和别人要求都高，容易暗暗较劲。",
+    壬: "像江河：聪明、视野开阔、爱自由，想法一个接一个。热情来得快，坚持下去是你一生的功课。",
+    癸: "像雨露：安静、直觉准、心思细，常常一眼看穿别人没说出口的话。安全感是你最需要自己补上的东西。"
+  };
+  var WXTIP = {
+    木: "多接触绿色植物、去公园走走，衣着可以多用青绿色；东方是你的有利方位。读书、学习新技能也属木，能帮你长出新的枝丫。",
+    火: "多晒太阳、多运动、多和朋友见面，红色、紫色能给你提气；南方对你有利。适合做需要表达和展示的事。",
+    土: "规律作息最补土：按时吃饭、早点睡。黄色、咖啡色是你的颜色，留在熟悉的城市深耕往往比到处跑更好。",
+    金: "整理房间、做计划表、去健身房，都是在补金；白色、金色、银色适合你，西方是有利方位。",
+    水: "多喝水、游泳、听音乐、出门旅行，黑色和深蓝色对你有帮助；北方是有利方位。适合需要思考和沟通的工作。"
+  };
+
+  // 中国 1986–1991 夏令时区间（当地时间 2:00 起止）
+  var DST = { 1986: ["05-04", "09-14"], 1987: ["04-12", "09-13"], 1988: ["04-10", "09-11"], 1989: ["04-16", "09-17"], 1990: ["04-15", "09-16"], 1991: ["04-14", "09-15"] };
+  function inDST(y, md) { var r = DST[y]; return !!r && md >= r[0] && md < r[1]; }
+  function eot(y, m, d) { // 均时差（分钟），近似公式
+    var n = Math.round((Date.UTC(y, m - 1, d) - Date.UTC(y, 0, 0)) / 864e5);
+    var B = 2 * Math.PI * (n - 81) / 364;
+    return 9.87 * Math.sin(2 * B) - 7.53 * Math.cos(B) - 1.5 * Math.sin(B);
+  }
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+
+  function calc(e) {
+    if (e) e.preventDefault();
+    var out = $("bout");
+    if (typeof Solar === "undefined") { out.innerHTML = '<div class="panel">排盘库没有加载成功，请检查网络后刷新页面。</div>'; return; }
+    var ds = $("bdate").value, ts = $("btime").value;
+    if (!ds || !ts) { out.innerHTML = '<div class="panel">请填写完整的出生日期和时间。</div>'; return; }
+    var y = +ds.slice(0, 4), m = +ds.slice(5, 7), d = +ds.slice(8, 10), hh = +ts.slice(0, 2), mi = +ts.slice(3, 5);
+    var city = CITIES[+$("bcity").value], useSolar = $("bsolar").value === "1", sect = +$("bsect").value, gender = +$("bgender").value;
+    var dst = inDST(y, ds.slice(5)) && hh >= 2;
+    var lonMin = (city[1] - 120) * 4, eq = eot(y, m, d);
+    var shift = (dst ? -60 : 0) + (useSolar ? lonMin + eq : 0);
+    var t = new Date(Date.UTC(y, m - 1, d, hh, mi) + Math.round(shift) * 60000);
+    var Y = t.getUTCFullYear(), M = t.getUTCMonth() + 1, D = t.getUTCDate(), H = t.getUTCHours(), MI = t.getUTCMinutes();
+
+    var lunar = Solar.fromYmdHms(Y, M, D, H, MI, 0).getLunar();
+    var ec = lunar.getEightChar(); ec.setSect(sect);
+    var dg = ec.getDayGan();
+    var cols = [
+      ["年柱", ec.getYearGan(), ec.getYearZhi(), ec.getYearHideGan(), ec.getYearNaYin()],
+      ["月柱", ec.getMonthGan(), ec.getMonthZhi(), ec.getMonthHideGan(), ec.getMonthNaYin()],
+      ["日柱", ec.getDayGan(), ec.getDayZhi(), ec.getDayHideGan(), ec.getDayNaYin()],
+      ["时柱", ec.getTimeGan(), ec.getTimeZhi(), ec.getTimeHideGan(), ec.getTimeNaYin()]
+    ];
+
+    // 五行力量（简化：天干 1，地支本气 1，其余藏干 0.3；月令本气加 0.5）
+    var score = { 木: 0, 火: 0, 土: 0, 金: 0, 水: 0 };
+    cols.forEach(function (c, i) {
+      score[GAN_WX[c[1]]] += 1;
+      c[3].forEach(function (h, k) { score[GAN_WX[h]] += k === 0 ? (i === 1 ? 1.5 : 1) : 0.3; });
+    });
+    var total = ORDER.reduce(function (s, k) { return s + score[k]; }, 0);
+    var me = GAN_WX[dg], mother = ORDER[(ORDER.indexOf(me) + 4) % 5];
+    var support = score[me] + score[mother];
+    var strong = support / total >= 0.45;
+    var favor = strong ? [gen(me), ctrl(me)] : [mother, me];
+    var weakest = ORDER.slice().sort(function (a, b) { return score[a] - score[b]; })[0];
+
+    var yun = ec.getYun(gender), dys = yun.getDaYun().slice(1, 9), nowY = new Date().getFullYear();
+    var cur = dys.filter(function (x) { return nowY >= x.getStartYear() && nowY <= x.getEndYear(); })[0];
+
+    var timeLine = "北京时间 " + ds + " " + ts;
+    if (dst) timeLine += "，当年处于夏令时，先减 1 小时";
+    if (useSolar) timeLine += "；" + city[0] + "经度修正 " + (lonMin >= 0 ? "+" : "") + lonMin.toFixed(0) + " 分，均时差 " + (eq >= 0 ? "+" : "") + eq.toFixed(0) + " 分";
+    timeLine += "。排盘时间：<b>" + Y + "-" + pad(M) + "-" + pad(D) + " " + pad(H) + ":" + pad(MI) + "</b>（农历" + lunar.getYearInChinese() + "年" + lunar.getMonthInChinese() + "月" + lunar.getDayInChinese() + "，" + lunar.getTimeZhi() + "时）";
+
+    function cell(ch) { return '<span class="wx-' + (GAN_WX[ch] || ZHI_WX[ch]) + '">' + ch + "</span>"; }
+    var th = '<tr><th></th>' + cols.map(function (c, i) { return '<th class="' + (i === 2 ? "day" : "") + '">' + c[0] + "</th>"; }).join("") + "</tr>";
+    var r1 = '<tr><td class="rowh">十神</td>' + cols.map(function (c, i) { return '<td class="' + (i === 2 ? "day" : "") + '">' + (i === 2 ? "日主" : shishen(dg, c[1])) + "</td>"; }).join("") + "</tr>";
+    var r2 = '<tr><td class="rowh">天干</td>' + cols.map(function (c, i) { return '<td class="big ' + (i === 2 ? "day" : "") + '">' + cell(c[1]) + "</td>"; }).join("") + "</tr>";
+    var r3 = '<tr><td class="rowh">地支</td>' + cols.map(function (c, i) { return '<td class="big ' + (i === 2 ? "day" : "") + '">' + cell(c[2]) + "</td>"; }).join("") + "</tr>";
+    var r4 = '<tr><td class="rowh">藏干</td>' + cols.map(function (c, i) { return '<td class="' + (i === 2 ? "day" : "") + '">' + c[3].map(function (h) { return cell(h) + '<span class="hint">' + shishen(dg, h) + "</span>"; }).join("<br>") + "</td>"; }).join("") + "</tr>";
+    var r5 = '<tr><td class="rowh">纳音</td>' + cols.map(function (c, i) { return '<td class="' + (i === 2 ? "day" : "") + '">' + c[4] + "</td>"; }).join("") + "</tr>";
+
+    var colorVar = { 木: "--wood", 火: "--fire", 土: "--earth", 金: "--metal", 水: "--water" };
+    var bars = ORDER.map(function (k) {
+      var pct = score[k] / total * 100;
+      return '<div class="bar"><span class="wx-' + k + '"><b>' + k + '</b></span><div class="track"><div class="fill" style="width:' + pct.toFixed(0) + "%;background:var(" + colorVar[k] + ')"></div></div><span>' + pct.toFixed(0) + "%</span></div>";
+    }).join("");
+
+    var yunHtml = dys.map(function (x) {
+      return '<div class="' + (x === cur ? "now" : "") + '"><b>' + x.getGanZhi() + "</b>" + x.getStartYear() + " 年起<br>" + x.getStartAge() + " 岁</div>";
+    }).join("");
+
+    var curText = cur ? "你现在走的是「" + cur.getGanZhi() + "」大运（" + cur.getStartYear() + "–" + cur.getEndYear() + "），天干" + cur.getGanZhi().charAt(0) + "对你来说是" + shishen(dg, cur.getGanZhi().charAt(0)) + "。" + (favor.indexOf(GAN_WX[cur.getGanZhi().charAt(0)]) >= 0 ? "这步运的天干正是你喜欢的五行，这十年适合主动争取。" : "这步运的天干不在你的喜用五行里，更适合稳扎稳打、积累实力。") : "当前年份还没进入第一步大运，现在主要看原局和流年。";
+
+    out.innerHTML =
+      '<div class="panel"><h2>' + lunar.getYearInGanZhi() + "年 · " + (gender ? "乾造（男）" : "坤造（女）") + '</h2><div class="solar">' + timeLine + "</div>" +
+      '<div class="pillars-wrap"><table class="pillars">' + th + r1 + r2 + r3 + r4 + r5 + "</table></div>" +
+      '<p class="hint">起运：出生后 ' + yun.getStartYear() + " 年 " + yun.getStartMonth() + " 个月 " + yun.getStartDay() + " 天，" + (GAN_YANG[ec.getYearGan()] === gender ? "顺排" : "逆排") + "。</p></div>" +
+      '<div class="panel"><h3>五行力量</h3><div class="bars">' + bars + '</div><p class="hint">日主' + dg + me + "，同类与生扶力量约占 " + (support / total * 100).toFixed(0) + "%，判断为身" + (strong ? "偏强" : "偏弱") + "，喜用 " + favor.join("、") + "。（Demo 为简化算法，正式版按《子平真诠》《滴天髓》《穷通宝鉴》规则引擎判断）</p></div>" +
+      '<div class="panel"><h3>大运</h3><div class="yun">' + yunHtml + "</div></div>" +
+      '<div class="panel"><h3>简批</h3>' +
+      "<p>你的日主是<span class=\"em\">" + dg + me + "</span>，" + DM[dg] + "</p>" +
+      "<p>" + (strong ? "命局里" + me + "的力量偏足，精力和主见都不缺，反而要找地方把劲使出去。" + favor[0] + "代表你的表达与才华，" + favor[1] + "代表你能抓住的资源，这两样多用起来，运势会更顺。" : "命局里" + me + "的力量偏弱，做事前容易先担心，需要外界的支持帮你托底。" + favor[0] + "是贵人和学习，" + favor[1] + "是朋友和同伴，多依靠它们，你会走得更稳。") + "</p>" +
+      "<p>五行里最少的是<span class=\"em\">" + weakest + "</span>。" + WXTIP[weakest] + "</p>" +
+      "<p>" + curText + "</p>" +
+      '<details><summary>完整命书包含哪些内容（正式版付费）</summary><p class="hint">性格深度分析、事业方向、感情与婚恋、财运结构、健康提醒、未来十年逐年流年详批，以及可随时追问的 AI 命理师。</p></details></div>';
+  }
+  $("bform").addEventListener("submit", calc);
+  if (document.readyState === "complete") calc(); else window.addEventListener("load", function () { calc(); });
+})();
+</script>
