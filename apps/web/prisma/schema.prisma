@@ -1,0 +1,174 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String    @id @default(cuid())
+  phone      String    @unique
+  nickname   String?
+  personaId  String    @default("qinghe")
+  /// 来自本人档案的出生年份，用于未成年人限制
+  birthYear  Int?
+  invitedBy  String?
+  createdAt  DateTime  @default(now())
+  sessions     Session[]
+  profiles     Profile[]
+  readings     Reading[]
+  entitlements Entitlement[]
+  usages       Usage[]
+  redemptions  Redemption[]
+}
+
+model Session {
+  /// sha256(token)
+  id        String   @id
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model SmsCode {
+  id        String    @id @default(cuid())
+  phone     String
+  codeHash  String
+  ip        String?
+  attempts  Int       @default(0)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([phone, createdAt])
+  @@index([ip, createdAt])
+}
+
+/// 生辰档案：本人、家人、朋友
+model Profile {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  relation  String   @default("self")
+  isSelf    Boolean  @default(false)
+  gender    String
+  calendar  String   @default("solar")
+  year      Int
+  month     Int
+  day       Int
+  leapMonth Boolean  @default(false)
+  hour      Int?
+  minute    Int?
+  placeName String?
+  longitude Float?
+  ziSect    Int      @default(1)
+  createdAt DateTime @default(now())
+  readings  Reading[]
+
+  @@index([userId])
+}
+
+/// 一次占卜：塔罗、八字、运势、六爻、灵签
+model Reading {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profileId     String?
+  profile       Profile?  @relation(fields: [profileId], references: [id], onDelete: SetNull)
+  kind          String
+  subtype       String
+  question      String?
+  topic         String?
+  questionHash  String?
+  /// 服务端私有数据（如洗好的牌序），不返回给前端
+  secret        Json?
+  result        Json?
+  text          String?
+  personaId     String?
+  source        String?
+  status        String    @default("ready")
+  unlocked      Boolean   @default(true)
+  followupsLeft Int       @default(0)
+  feedback      String?
+  humanLike     String?
+  createdAt     DateTime  @default(now())
+  followups     Followup[]
+
+  @@index([userId, createdAt])
+  @@index([userId, kind, questionHash])
+}
+
+model Followup {
+  id        String   @id @default(cuid())
+  readingId String
+  reading   Reading  @relation(fields: [readingId], references: [id], onDelete: Cascade)
+  question  String
+  answer    String
+  createdAt DateTime @default(now())
+}
+
+/// 权益：次卡或会员
+model Entitlement {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   String
+  remaining Int?
+  expiresAt DateTime?
+  source    String    @default("redeem")
+  createdAt DateTime  @default(now())
+
+  @@index([userId, product])
+}
+
+/// 兑换码：内测期用来模拟付费，也用作邀请码（product = invite）
+model RedeemCode {
+  code      String    @id
+  product   String
+  quantity  Int       @default(1)
+  days      Int?
+  maxUses   Int       @default(1)
+  usedCount Int       @default(0)
+  note      String?
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+  redemptions Redemption[]
+}
+
+model Redemption {
+  id        String     @id @default(cuid())
+  code      String
+  redeem    RedeemCode @relation(fields: [code], references: [code], onDelete: Cascade)
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+
+  @@unique([code, userId])
+}
+
+/// 每日用量计数
+model Usage {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  day    String
+  kind   String
+  count  Int    @default(0)
+
+  @@unique([userId, day, kind])
+}
+
+/// 同一命盘的命书缓存，避免重复生成、口径漂移
+model ReportCache {
+  key       String   @id
+  text      String
+  personaId String
+  source    String
+  createdAt DateTime @default(now())
+}

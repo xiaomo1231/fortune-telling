@@ -7,7 +7,6 @@
     "build": "pnpm --filter @moxing/web build",
     "test": "pnpm -r --if-present test",
     "typecheck": "pnpm -r --if-present typecheck",
-    "db:migrate": "pnpm --filter @moxing/web exec prisma migrate deploy",
-    "db:seed": "pnpm --filter @moxing/web exec tsx prisma/seed.ts"
+    "db:migrate": "pnpm --filter @moxing/web exec prisma migrate deploy"
   }
 }

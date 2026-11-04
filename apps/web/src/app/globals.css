@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+/* 设计令牌：纸色与朱红，跟牌面一致；夜间为墨色底 */
+:root {
+  --paper: #f7f1ea;
+  --paper-2: #efe6da;
+  --surface: #fffaf4;
+  --ink: #2a211c;
+  --muted: #74675d;
+  --line: #e0d3c3;
+  --red: #c8321f;
+  --red-2: #a82716;
+  --orange: #e9762f;
+  --gold: #b98a22;
+  --water: #2f6f86;
+  --air: #5a4e9c;
+  --earth: #6b7a3a;
+  --night: #1b1714;
+  --shadow: 0 1px 2px rgb(42 33 28 / 0.06), 0 8px 24px rgb(42 33 28 / 0.08);
+  --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #17130f; --paper-2: #211b16; --surface: #221c17; --ink: #f1e8dc; --muted: #ad9f90; --line: #3a3027;
+    --red: #e2553f; --red-2: #f06a52; --orange: #f08a4a; --gold: #d8ad48;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #17130f; --paper-2: #211b16; --surface: #221c17; --ink: #f1e8dc; --muted: #ad9f90; --line: #3a3027;
+  --red: #e2553f; --red-2: #f06a52; --orange: #f08a4a; --gold: #d8ad48;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.35);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-red: var(--red);
+  --color-red-2: var(--red-2);
+  --color-orange: var(--orange);
+  --color-gold: var(--gold);
+  --font-serif: var(--font-serif);
+  --font-sans: var(--font-sans);
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-sans);
+  font-size: 16px; line-height: 1.75; -webkit-font-smoothing: antialiased;
+}
+[hidden] { display: none !important; }
+a { color: inherit; }
+::selection { background: color-mix(in srgb, var(--red) 25%, transparent); }
+
+.card-svg svg { display: block; width: 100%; height: 100%; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 0 20px; border-radius: 999px; font-weight: 600; font-size: 15px; border: 1px solid transparent; cursor: pointer; transition: transform .15s, background .2s, opacity .2s; text-decoration: none; }
+.btn:active { transform: scale(.97); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn-primary { background: var(--red); color: #fff; }
+.btn-primary:hover:not(:disabled) { background: var(--red-2); }
+.btn-ghost { background: transparent; border-color: var(--line); color: var(--ink); }
+.btn-ghost:hover:not(:disabled) { border-color: var(--red); color: var(--red); }
+.chip { display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-size: 14px; cursor: pointer; color: var(--ink); }
+.chip[aria-pressed="true"] { border-color: var(--red); color: var(--red); background: color-mix(in srgb, var(--red) 8%, var(--surface)); font-weight: 600; }
+.field { width: 100%; min-height: 44px; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: inherit; }
+.field:focus { outline: 2px solid color-mix(in srgb, var(--red) 50%, transparent); outline-offset: 1px; border-color: var(--red); }
+.label { font-size: 13px; color: var(--muted); margin-bottom: 4px; display: block; }
+.reading-text p { margin: 0 0 1em; }
+.reading-text p:last-child { margin-bottom: 0; }
+.ornament { display: flex; align-items: center; gap: 10px; color: var(--red); }
+.ornament::before, .ornament::after { content: ""; flex: 1; height: 1px; background: currentColor; opacity: .35; }
+.caret::after { content: "▍"; color: var(--red); animation: blink 1s steps(2) infinite; margin-left: 1px; }
+@keyframes blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
